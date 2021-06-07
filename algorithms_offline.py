@@ -177,7 +177,7 @@ if __name__ == "__main__":
             features = [float(row[2]), float(row[3])]
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
-    solf, elapsed_time = FairSwap(X=elements, k=[5, 5], dist=utils.euclidean_dist)
+    solf, elapsed_time = FairSwap(X=elements, k=[2, 8], dist=utils.euclidean_dist)
     print(solf, elapsed_time)
     solution = []
     for i in solf:
@@ -193,8 +193,8 @@ if __name__ == "__main__":
     sol1, div1 = GMM_color(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
     print(sol1, div1[-1])
 
-    sol2, div2, elapsed_time2 = FairGMM(X=elements, num_colors=2, k=[5, 5], dist=utils.euclidean_dist)
-    print(sol2, div2, elapsed_time2)
+    # sol2, div2, elapsed_time2 = FairGMM(X=elements, num_colors=2, k=[5, 5], dist=utils.euclidean_dist)
+    # print(sol2, div2, elapsed_time2)
     # solf2 = [0, 52, 51, 82, 45, 6, 41, 13, 23, 96]
     # solution.clear()
     # for i in solf2:
