@@ -1,5 +1,6 @@
 import csv
 import itertools
+import math
 import sys
 import numpy as np
 import time
@@ -125,20 +126,23 @@ def FairSwap(X, k, dist):
 
 
 def FairGMM(X, num_colors, k, dist):
+    sum_k = sum(k)
+    num_enum = 1
+    for c in range(num_colors):
+        num_enum *= math.comb(sum_k, k[c])
+    print(num_enum)
+    if num_enum > 1e6:
+        return list(), 0, 0
     t0 = time.perf_counter()
     S = []
     Div = []
-    sum_k = sum(k)
     for c in range(num_colors):
         Sc, Divc = GMM_color(X, color=c, k=sum_k, init=[], dist=dist)
         S.append(Sc)
         Div.append(Divc)
     f_seqs = []
-    num_f_sols = 1
     for c in range(num_colors):
         f_seqs.append(list(itertools.combinations(S[c], k[c])))
-        num_f_sols *= len(f_seqs[c])
-    print(num_f_sols)
     f_sols = f_seqs[0].copy()
     for c in range(num_colors - 1):
         f_sols = list(itertools.product(f_sols, f_seqs[c + 1]))
@@ -189,11 +193,11 @@ if __name__ == "__main__":
     sol1, div1 = GMM_color(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
     print(sol1, div1[-1])
 
-    # sol2, div2, elapsed_time2 = FairGMM(X=elements, num_colors=2, k=[5, 5], dist=utils.euclidean_dist)
-    # print(sol2, div2, elapsed_time2)
-    solf2 = [0, 52, 51, 82, 45, 6, 41, 13, 23, 96]
-    solution.clear()
-    for i in solf2:
-        solution.append(elements[i])
-    print(utils.diversity(solution, utils.euclidean_dist))
+    sol2, div2, elapsed_time2 = FairGMM(X=elements, num_colors=2, k=[5, 5], dist=utils.euclidean_dist)
+    print(sol2, div2, elapsed_time2)
+    # solf2 = [0, 52, 51, 82, 45, 6, 41, 13, 23, 96]
+    # solution.clear()
+    # for i in solf2:
+    #     solution.append(elements[i])
+    # print(utils.diversity(solution, utils.euclidean_dist))
 
