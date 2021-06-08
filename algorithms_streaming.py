@@ -104,7 +104,8 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     upper = len(all_ins) - 1
     while lower < upper - 1:
         mid = (lower + upper) // 2
-        if len(all_ins[mid].idxs) == k[0] + k[1] and len(group_ins[0][mid].idxs) == k[0] and len(group_ins[1][mid].idxs) == k[1]:
+        if len(all_ins[mid].idxs) == k[0] + k[1] and len(group_ins[0][mid].idxs) == k[0] and len(
+                group_ins[1][mid].idxs) == k[1]:
             upper = mid
         else:
             lower = mid
@@ -249,14 +250,15 @@ if __name__ == "__main__":
             features = [float(row[2]), float(row[3])]
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
-    solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0, dmin=5.0)
+    solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
+                                                dmin=5.0)
     print(solf, div_solf, elapsed_time)
     solution = []
     for i in solf:
         solution.append(elements[i])
     print(utils.diversity(solution, utils.euclidean_dist))
-    solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
-                                                 dmin=5.0)
+    solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist,
+                                                                 eps=0.1, dmax=15.0, dmin=5.0)
     print(solf2, div_solf2, stream_time, post_time)
     solution.clear()
     for i in solf2:
