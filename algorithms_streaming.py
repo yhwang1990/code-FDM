@@ -53,6 +53,9 @@ def StreamDivMax(X, k, dist, eps, dmax, dmin):
 
 
 def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
+    if len(k) != 2:
+        print("The length of k must be 2")
+        return list(), 0, 0
     t0 = time.perf_counter()
     # Initialization
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))

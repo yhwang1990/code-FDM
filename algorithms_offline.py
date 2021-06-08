@@ -3,6 +3,7 @@ import itertools
 import math
 import sys
 import numpy as np
+import networkx as nx
 import time
 import utils
 
@@ -73,6 +74,9 @@ def GMM_color(X, color, k, init, dist):
 
 
 def FairSwap(X, k, dist):
+    if len(k) != 2:
+        print("The length of k must be 2")
+        return list(), 0, 0
     t0 = time.perf_counter()
     S, div = GMM(X, k=k[0] + k[1], init=[], dist=dist)
     S_group0 = []
@@ -128,10 +132,10 @@ def FairSwap(X, k, dist):
         return S, div_S, (t1 - t0)
 
 
-def FairGMM(X, num_colors, k, dist):
+def FairGMM(X, m, k, dist):
     sum_k = sum(k)
     num_enum = 1
-    for c in range(num_colors):
+    for c in range(m):
         num_enum *= math.comb(sum_k, k[c])
     print(num_enum)
     if num_enum > 1e6:
@@ -139,14 +143,14 @@ def FairGMM(X, num_colors, k, dist):
 
     t0 = time.perf_counter()
     S = []
-    for c in range(num_colors):
+    for c in range(m):
         Sc, divc = GMM_color(X, color=c, k=sum_k, init=[], dist=dist)
         S.append(Sc)
     f_seqs = []
-    for c in range(num_colors):
+    for c in range(m):
         f_seqs.append(list(itertools.combinations(S[c], k[c])))
     f_sols = f_seqs[0].copy()
-    for c in range(num_colors - 1):
+    for c in range(m - 1):
         f_sols = list(itertools.product(f_sols, f_seqs[c + 1]))
         for i in range(len(f_sols)):
             f_sols[i] = list(np.concatenate(f_sols[i]).flat)
@@ -160,6 +164,92 @@ def FairGMM(X, num_colors, k, dist):
             max_div = div_f_sol
     t1 = time.perf_counter()
     return max_sol, max_div, (t1 - t0)
+
+
+def FairFlow(X, m, k, dist):
+    t0 = time.perf_counter()
+    sum_k = sum(k)
+    S = []
+    Div = []
+    for c in range(m):
+        Sc, divc = GMM_color(X, color=c, k=sum_k, init=[], dist=dist)
+        S.append(Sc)
+        Div.append(divc)
+    print(S)
+    print(Div)
+    dist_matrix = np.empty([sum_k * m, sum_k * m])
+    for c1 in range(m):
+        for i1 in range(sum_k):
+            for c2 in range(m):
+                for i2 in range(sum_k):
+                    dist_matrix[c1 * sum_k + i1][c2 * sum_k + i2] = dist(X[S[c1][i1]], X[S[c2][i2]])
+    dist_array = np.sort(dist_matrix.flatten())
+    lower = sum_k * m
+    upper = len(dist_array) - 1
+    sol = []
+    div_sol = 0.0
+    while lower < upper - 1:
+        mid = (lower + upper) // 2
+        gamma = dist_array[mid]
+        dist1 = m * gamma / (3 * m - 1)
+        dist2 = gamma / (3 * m - 1)
+        print(mid, gamma, dist1, dist2)
+        Z = []
+        GZ = nx.Graph()
+        for c in range(m):
+            Zc = []
+            for i in range(sum_k):
+                if Div[c][i] >= dist1:
+                    Zc.append(S[c][i])
+                    GZ.add_node(S[c][i])
+                else:
+                    break
+            Z.append(Zc)
+        print(Z)
+        for c1 in range(m):
+            for i1 in range(len(Z[c1])):
+                for c2 in range(m):
+                    for i2 in range(len(Z[c2])):
+                        if c1 * sum_k + i1 != c2 * sum_k + i2 and dist_matrix[c1 * sum_k + i1][c2 * sum_k + i2] < dist2:
+                            GZ.add_edge(Z[c1][i1], Z[c2][i2])
+        C = []
+        for cc in nx.connected_components(GZ):
+            C.append(set(cc))
+        print(C)
+        FlowG = nx.DiGraph()
+        FlowG.add_node("a")
+        FlowG.add_node("b")
+        for c in range(m):
+            FlowG.add_node("u" + str(c))
+            FlowG.add_edge("a", "u" + str(c), capacity=k[c])
+        for j in range(len(C)):
+            FlowG.add_node("v" + str(j))
+            FlowG.add_edge("v" + str(j), "b", capacity=1)
+            for c in range(m):
+                for i in range(len(Z[c])):
+                    if Z[c][i] in C[j]:
+                        FlowG.add_edge("u" + str(c), "v" + str(j), capacity=1)
+                        break
+        flow_size, flow_dict = nx.maximum_flow(FlowG, "a", "b")
+        print(flow_size, flow_dict)
+        if flow_size < sum_k - 0.5:
+            upper = mid
+        else:
+            lower = mid
+            if lower >= upper - 1:
+                for c in range(m):
+                    for j in range(len(C)):
+                        if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
+                            for s_idx in Z[c]:
+                                if s_idx in C[j]:
+                                    sol.append(s_idx)
+                                    break
+            if len(sol) < sum_k:
+                print("There are some errors in flow_dict")
+            else:
+                div_sol = diversity(X, sol, dist)
+    t1 = time.perf_counter()
+    return sol, div_sol, (t1 - t0)
 
 
 def diversity(X, idxs, dist):
@@ -179,17 +269,15 @@ if __name__ == "__main__":
             features = [float(row[2]), float(row[3])]
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
+
     solf, div_solf, elapsed_time = FairSwap(X=elements, k=[2, 3], dist=utils.euclidean_dist)
     print(solf, div_solf, elapsed_time)
 
-    sol, div_sol = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol, div_sol[-1])
+    # sol0, div_sol0 = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
+    # print(sol0, div_sol0[-1])
+    #
+    # sol1, div_sol1, elapsed_time1 = FairGMM(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
+    # print(sol1, div_sol1, elapsed_time1)
 
-    sol0, div_sol0 = GMM_color(X=elements, color=0, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol0, div_sol0[-1])
-
-    sol1, div_sol1 = GMM_color(X=elements, color=1, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol1, div_sol1[-1])
-
-    sol2, div_sol2, elapsed_time2 = FairGMM(X=elements, num_colors=2, k=[2, 3], dist=utils.euclidean_dist)
-    print(sol2, div_sol2, elapsed_time2)
+    solf2, div_solf2, elapsed_time2 = FairFlow(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
+    print(solf2, div_solf2, elapsed_time2)
