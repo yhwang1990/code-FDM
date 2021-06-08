@@ -249,16 +249,16 @@ if __name__ == "__main__":
             features = [float(row[2]), float(row[3])]
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
-    # solf, divf, elapsed_time = StreamDivMax(X=elements, k=10, dist=utils.euclidean_dist, eps=0.1, dmax=6.0, dmin=3.0)
-    # print(solf, divf, elapsed_time)
-    # solution = []
-    # for i in solf:
-    #     solution.append(elements[i])
-    # print(utils.diversity(solution, utils.euclidean_dist))
-    solf, divf, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 8], dist=utils.euclidean_dist, eps=0.1, dmax=6.0,
-                                                 dmin=3.0)
-    print(solf, divf, stream_time, post_time)
+    solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0, dmin=5.0)
+    print(solf, div_solf, elapsed_time)
     solution = []
     for i in solf:
+        solution.append(elements[i])
+    print(utils.diversity(solution, utils.euclidean_dist))
+    solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
+                                                 dmin=5.0)
+    print(solf2, div_solf2, stream_time, post_time)
+    solution.clear()
+    for i in solf2:
         solution.append(elements[i])
     print(utils.diversity(solution, utils.euclidean_dist))
