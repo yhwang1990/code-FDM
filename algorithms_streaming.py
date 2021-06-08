@@ -289,11 +289,6 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                     gins.idxs.add(x.idx)
                     gins.div = min(gins.div, div_x)
     t1 = time.perf_counter()
-    # for ins_id in range(len(all_ins)):
-    #     print(ins_id, all_ins[ins_id].mu)
-    #     print(all_ins[ins_id].idxs)
-    #     for c in range(m):
-    #         print(group_ins[c][ins_id].idxs)
     # post-processing
     sol = None
     sol_div = 0.0
@@ -304,7 +299,6 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                 hasValidSol = False
                 break
         if not hasValidSol:
-            # print("No valid solution")
             continue
         S_all = set()
         S_all.update(all_ins[ins_id].idxs)
@@ -339,10 +333,10 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                     if num_elem_col[c] == k[c]:
                         break
         # print(S_prime, num_elem_col)
+        X1 = set()
+        X2 = set()
+        P_prime = set()
         if len(S_prime) < sum_k:
-            X1 = set()
-            X2 = set()
-            P_prime = set()
             for s_idx in S_prime:
                 P_prime.add(dict_par[s_idx])
             for s_idx in S_all:
@@ -375,10 +369,52 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                 for s_idx in P[max_par]:
                     X2.discard(s_idx)
                 cand = X1.intersection(X2)
-                # print(cand, X1, X2)
+        while len(S_prime) < sum_k and len(X1) > 0 and len(X2) > 0:
+            GA = nx.DiGraph()
+            GA.add_node(-1)
+            GA.add_node(len(X))
+            for s_idx in X1:
+                GA.add_node(s_idx)
+                GA.add_edge(-1, s_idx)
+            for s_idx in X2:
+                GA.add_node(s_idx)
+                GA.add_edge(s_idx, len(X))
+            for s_idx1 in S_prime:
+                GA.add_node(s_idx1)
+                for s_idx2 in X1:
+                    if X[s_idx1].color == X[s_idx2].color:
+                        GA.add_edge(s_idx1, s_idx2)
+                    if dict_par[s_idx1] == dict_par[s_idx2]:
+                        GA.add_edge(s_idx2, s_idx1)
+                for s_idx2 in X2:
+                    if X[s_idx1].color == X[s_idx2].color:
+                        GA.add_edge(s_idx1, s_idx2)
+                    if dict_par[s_idx1] == dict_par[s_idx2]:
+                        GA.add_edge(s_idx2, s_idx1)
+            try:
+                s_path = nx.shortest_path(GA, source=-1, target=len(X))
+                for s_idx in s_path:
+                    if -1 < s_idx < len(X):
+                        if s_idx in S_prime:
+                            S_prime.remove(s_idx)
+                        else:
+                            S_prime.add(s_idx)
+                P_prime.clear()
+                X1.clear()
+                X2.clear()
+                for s_idx in S_prime:
+                    P_prime.add(dict_par[s_idx])
+                for s_idx in S_all:
+                    s_col = X[s_idx].color
+                    s_par = dict_par[s_idx]
+                    if s_idx not in S_prime and num_elem_col[s_col] < k[s_col]:
+                        X1.add(s_idx)
+                    if s_idx not in S_prime and s_par not in P_prime:
+                        X2.add(s_idx)
+            except nx.NetworkXNoPath:
+                break
         if len(S_prime) == sum_k:
             div_s = diversity(X, S_prime, dist)
-            # print(S_prime, div_s)
             if div_s > sol_div:
                 sol = S_prime
                 sol_div = div_s
@@ -418,6 +454,7 @@ if __name__ == "__main__":
                                                                      eps=0.1, dmax=15.0, dmin=5.0)
         print(solf2, div_solf2, stream_time, post_time)
 
-        solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2, dist=utils.euclidean_dist,
+        solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2,
+                                                                       dist=utils.euclidean_dist,
                                                                        eps=0.1, dmax=15.0, dmin=5.0)
         print(solf3, div_solf3, stream_time3, post_time3)
