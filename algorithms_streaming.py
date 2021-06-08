@@ -59,7 +59,7 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     print(zmin, zmax)
     all_ins = []
-    group_ins = [[], []]
+    group_ins = [list(), list()]
     for z in range(zmin, zmax + 1):
         ins = Instance(k=k[0] + k[1], mu=math.pow(1 - eps, z), num_colors=2)
         all_ins.append(ins)
@@ -113,14 +113,10 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     sol_div = 0
     sol_idx = -1
     for ins_id in range(upper + 1):
-        # print(ins_id, all_ins[ins_id].mu, all_ins[ins_id].idxs, all_ins[ins_id].group_idxs[0], all_ins[ins_id].group_idxs[1],
-        #      group_ins[0][ins_id].idxs, group_ins[1][ins_id].idxs)
         if len(all_ins[ins_id].group_idxs[0].union(group_ins[0][ins_id].idxs)) < k[0] or len(
                 all_ins[ins_id].group_idxs[1].union(group_ins[1][ins_id].idxs)) < k[1]:
-            # print("Case 1")
             continue
         elif len(all_ins[ins_id].idxs) < k[0] + k[1]:
-            # print("Case 2")
             while len(all_ins[ins_id].group_idxs[0]) < k[0]:
                 max_div = 0.0
                 max_idx = -1
@@ -134,7 +130,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                             max_idx = idx1
                 all_ins[ins_id].idxs.add(max_idx)
                 all_ins[ins_id].group_idxs[0].add(max_idx)
-                # print("add " + str(max_idx))
             while len(all_ins[ins_id].group_idxs[1]) < k[1]:
                 max_div = 0.0
                 max_idx = -1
@@ -148,7 +143,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                             max_idx = idx1
                 all_ins[ins_id].idxs.add(max_idx)
                 all_ins[ins_id].group_idxs[1].add(max_idx)
-                # print("add " + str(max_idx))
             while len(all_ins[ins_id].group_idxs[0]) > k[0]:
                 min_div = sys.float_info.max
                 min_idx = -1
@@ -162,7 +156,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                         min_idx = idx1
                 all_ins[ins_id].idxs.remove(min_idx)
                 all_ins[ins_id].group_idxs[0].remove(min_idx)
-                # print("remove " + str(min_idx))
             while len(all_ins[ins_id].group_idxs[1]) > k[1]:
                 min_div = sys.float_info.max
                 min_idx = -1
@@ -176,14 +169,11 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                         min_idx = idx1
                 all_ins[ins_id].idxs.remove(min_idx)
                 all_ins[ins_id].group_idxs[1].remove(min_idx)
-                # print("remove " + str(min_idx))
-            # print(all_ins[ins_id].idxs)
             ins_div = diversity(X, all_ins[ins_id].idxs, dist)
             if ins_div > sol_div:
                 sol_idx = ins_id
                 sol_div = ins_div
         else:
-            # print("Case 3")
             while len(all_ins[ins_id].group_idxs[0]) < k[0]:
                 max_div = 0.0
                 max_idx = -1
@@ -197,7 +187,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                             max_idx = idx1
                 all_ins[ins_id].idxs.add(max_idx)
                 all_ins[ins_id].group_idxs[0].add(max_idx)
-                # print("add " + str(max_idx))
             while len(all_ins[ins_id].group_idxs[1]) < k[1]:
                 max_div = 0.0
                 max_idx = -1
@@ -211,7 +200,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                             max_idx = idx1
                 all_ins[ins_id].idxs.add(max_idx)
                 all_ins[ins_id].group_idxs[1].add(max_idx)
-                # print("add " + str(max_idx))
             while len(all_ins[ins_id].group_idxs[0]) > k[0]:
                 min_div = sys.float_info.max
                 min_idx = -1
@@ -224,7 +212,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                         min_idx = idx1
                 all_ins[ins_id].idxs.remove(min_idx)
                 all_ins[ins_id].group_idxs[0].remove(min_idx)
-                # print("remove " + str(min_idx))
             while len(all_ins[ins_id].group_idxs[1]) > k[1]:
                 min_div = sys.float_info.max
                 min_idx = -1
@@ -237,7 +224,6 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                         min_idx = idx1
                 all_ins[ins_id].idxs.remove(min_idx)
                 all_ins[ins_id].group_idxs[1].remove(min_idx)
-                # print("remove " + str(min_idx))
             ins_div = diversity(X, all_ins[ins_id].idxs, dist)
             if ins_div > sol_div:
                 sol_idx = ins_id
@@ -248,10 +234,10 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
 
 def diversity(X, idxs, dist):
     div_val = sys.float_info.max
-    for id1 in idxs:
-        for id2 in idxs:
-            if id1 != id2:
-                div_val = min(div_val, dist(X[id1], X[id2]))
+    for idx1 in idxs:
+        for idx2 in idxs:
+            if idx1 != idx2:
+                div_val = min(div_val, dist(X[idx1], X[idx2]))
     return div_val
 
 
