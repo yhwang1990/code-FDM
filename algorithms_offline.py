@@ -5,6 +5,7 @@ import sys
 import numpy as np
 import networkx as nx
 import time
+import random
 import utils
 
 
@@ -137,7 +138,7 @@ def FairGMM(X, m, k, dist):
     num_enum = 1
     for c in range(m):
         num_enum *= math.comb(sum_k, k[c])
-    print(num_enum)
+    # print(num_enum)
     if num_enum > 1e6:
         return list(), 0, 0
 
@@ -159,7 +160,7 @@ def FairGMM(X, m, k, dist):
     for f_sol in f_sols:
         div_f_sol = diversity(X, idxs=f_sol, dist=dist)
         if div_f_sol > max_div:
-            print(div_f_sol)
+            # print(div_f_sol)
             max_sol = f_sol
             max_div = div_f_sol
     t1 = time.perf_counter()
@@ -270,20 +271,22 @@ if __name__ == "__main__":
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
 
-    sol0, div_sol0 = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol0, div_sol0[-1])
+    for run in range(10):
+        random.Random(run).shuffle(elements)
+        for new_idx in range(len(elements)):
+            elements[new_idx].idx = new_idx
+        print(elements[0].idx, elements[0].color, elements[0].features)
 
-    sol1, div_sol1 = GMM_color(X=elements, color=0, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol1, div_sol1[-1])
+        # sol0, div_sol0 = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
+        # print(sol0, div_sol0[-1])
+        # sol1, div_sol1 = GMM_color(X=elements, color=0, k=5, init=[], dist=utils.euclidean_dist)
+        # print(sol1, div_sol1[-1])
+        # sol2, div_sol2 = GMM_color(X=elements, color=1, k=5, init=[], dist=utils.euclidean_dist)
+        # print(sol2, div_sol2[-1])
 
-    sol2, div_sol2 = GMM_color(X=elements, color=1, k=5, init=[], dist=utils.euclidean_dist)
-    print(sol2, div_sol2[-1])
-
-    # solf, div_solf, elapsed_time = FairSwap(X=elements, k=[2, 3], dist=utils.euclidean_dist)
-    # print(solf, div_solf, elapsed_time)
-
-    # sol1, div_sol1, elapsed_time1 = FairGMM(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
-    # print(sol1, div_sol1, elapsed_time1)
-
-    # solf2, div_solf2, elapsed_time2 = FairFlow(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
-    # print(solf2, div_solf2, elapsed_time2)
+        solf, div_solf, elapsed_time = FairSwap(X=elements, k=[3, 2], dist=utils.euclidean_dist)
+        print(solf, div_solf, elapsed_time)
+        solf1, div_solf1, elapsed_time1 = FairGMM(X=elements, m=2, k=[3, 2], dist=utils.euclidean_dist)
+        print(solf1, div_solf1, elapsed_time1)
+        solf2, div_solf2, elapsed_time2 = FairFlow(X=elements, m=2, k=[3, 2], dist=utils.euclidean_dist)
+        print(solf2, div_solf2, elapsed_time2)

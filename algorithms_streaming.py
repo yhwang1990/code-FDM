@@ -4,6 +4,7 @@ import sys
 import time
 import numpy as np
 import networkx as nx
+import random
 import utils
 
 
@@ -62,7 +63,7 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     # Initialization
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
-    print(zmin, zmax)
+    # print(zmin, zmax)
     all_ins = []
     group_ins = [list(), list()]
     for z in range(zmin, zmax + 1):
@@ -244,7 +245,7 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
     sum_k = sum(k)
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
-    print(zmin, zmax)
+    # print(zmin, zmax)
     all_ins = []
     group_ins = []
     for c in range(m):
@@ -403,25 +404,20 @@ if __name__ == "__main__":
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
 
-    # solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
-    #                                             dmin=5.0)
-    # print(solf, div_solf, elapsed_time)
-    # solution = []
-    # for i in solf:
-    #     solution.append(elements[i])
-    # print(utils.diversity(solution, utils.euclidean_dist))
-    solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist,
-                                                                 eps=0.1, dmax=17.0, dmin=8.0)
-    print(solf2, div_solf2, stream_time, post_time)
-    # solution.clear()
-    # for i in solf2:
-    #     solution.append(elements[i])
-    # print(utils.diversity(solution, utils.euclidean_dist))
+    for run in range(10):
+        random.Random(run).shuffle(elements)
+        for new_idx in range(len(elements)):
+            elements[new_idx].idx = new_idx
+        print(elements[0].idx, elements[0].color, elements[0].features)
 
-    solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2, dist=utils.euclidean_dist,
-                                                                   eps=0.1, dmax=17.0, dmin=8.0)
-    print(solf3, div_solf3, stream_time3, post_time3)
-    # solution = []
-    # for i in solf3:
-    #     solution.append(elements[i])
-    # print(utils.diversity(solution, utils.euclidean_dist))
+        # solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.05, dmax=15.0,
+        #                                             dmin=5.0)
+        # print(solf, div_solf, elapsed_time)
+
+        solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist,
+                                                                     eps=0.1, dmax=15.0, dmin=5.0)
+        print(solf2, div_solf2, stream_time, post_time)
+
+        solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2, dist=utils.euclidean_dist,
+                                                                       eps=0.1, dmax=15.0, dmin=5.0)
+        print(solf3, div_solf3, stream_time3, post_time3)
