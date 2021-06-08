@@ -58,17 +58,17 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     print(zmin, zmax)
-    Ins = []
-    GroupI = [[], []]
+    all_ins = []
+    group_ins = [[], []]
     for z in range(zmin, zmax + 1):
         ins = Instance(k=k[0] + k[1], mu=math.pow(1 - eps, z), num_colors=2)
-        Ins.append(ins)
+        all_ins.append(ins)
         for c in range(0, 2):
             gins = Instance(k=k[c], mu=math.pow(1 - eps, z), num_colors=1)
-            GroupI[c].append(gins)
+            group_ins[c].append(gins)
     # Stream processing
     for x in X:
-        for ins in Ins:
+        for ins in all_ins:
             if len(ins.idxs) == 0:
                 ins.idxs.add(x.idx)
                 ins.group_idxs[x.color].add(x.idx)
@@ -84,7 +84,7 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
                     ins.idxs.add(x.idx)
                     ins.group_idxs[x.color].add(x.idx)
                     ins.div = min(ins.div, div_x)
-        for gins in GroupI[x.color]:
+        for gins in group_ins[x.color]:
             if len(gins.idxs) == 0:
                 gins.idxs.add(x.idx)
             elif len(gins.idxs) < gins.k:
@@ -101,10 +101,10 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     t1 = time.perf_counter()
     # Post-processing (1): Find the lower index
     lower = 0
-    upper = len(Ins) - 1
+    upper = len(all_ins) - 1
     while lower < upper - 1:
         mid = (lower + upper) // 2
-        if len(Ins[mid].idxs) == k[0] + k[1] and len(GroupI[0][mid].idxs) == k[0] and len(GroupI[1][mid].idxs) == k[1]:
+        if len(all_ins[mid].idxs) == k[0] + k[1] and len(group_ins[0][mid].idxs) == k[0] and len(group_ins[1][mid].idxs) == k[1]:
             upper = mid
         else:
             lower = mid
@@ -113,137 +113,137 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     sol_div = 0
     sol_idx = -1
     for ins_id in range(upper + 1):
-        # print(ins_id, Ins[ins_id].mu, Ins[ins_id].idxs, Ins[ins_id].group_idxs[0], Ins[ins_id].group_idxs[1],
-        #      GroupI[0][ins_id].idxs, GroupI[1][ins_id].idxs)
-        if len(Ins[ins_id].group_idxs[0].union(GroupI[0][ins_id].idxs)) < k[0] or len(
-                Ins[ins_id].group_idxs[1].union(GroupI[1][ins_id].idxs)) < k[1]:
+        # print(ins_id, all_ins[ins_id].mu, all_ins[ins_id].idxs, all_ins[ins_id].group_idxs[0], all_ins[ins_id].group_idxs[1],
+        #      group_ins[0][ins_id].idxs, group_ins[1][ins_id].idxs)
+        if len(all_ins[ins_id].group_idxs[0].union(group_ins[0][ins_id].idxs)) < k[0] or len(
+                all_ins[ins_id].group_idxs[1].union(group_ins[1][ins_id].idxs)) < k[1]:
             # print("Case 1")
             continue
-        elif len(Ins[ins_id].idxs) < k[0] + k[1]:
+        elif len(all_ins[ins_id].idxs) < k[0] + k[1]:
             # print("Case 2")
-            while len(Ins[ins_id].group_idxs[0]) < k[0]:
+            while len(all_ins[ins_id].group_idxs[0]) < k[0]:
                 max_div = 0.0
                 max_idx = -1
-                for idx1 in GroupI[0][ins_id].idxs:
-                    if idx1 not in Ins[ins_id].group_idxs[0]:
+                for idx1 in group_ins[0][ins_id].idxs:
+                    if idx1 not in all_ins[ins_id].group_idxs[0]:
                         div1 = sys.float_info.max
-                        for idx2 in Ins[ins_id].idxs:
+                        for idx2 in all_ins[ins_id].idxs:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                         if div1 > max_div:
                             max_div = div1
                             max_idx = idx1
-                Ins[ins_id].idxs.add(max_idx)
-                Ins[ins_id].group_idxs[0].add(max_idx)
+                all_ins[ins_id].idxs.add(max_idx)
+                all_ins[ins_id].group_idxs[0].add(max_idx)
                 # print("add " + str(max_idx))
-            while len(Ins[ins_id].group_idxs[1]) < k[1]:
+            while len(all_ins[ins_id].group_idxs[1]) < k[1]:
                 max_div = 0.0
                 max_idx = -1
-                for idx1 in GroupI[1][ins_id].idxs:
-                    if idx1 not in Ins[ins_id].group_idxs[1]:
+                for idx1 in group_ins[1][ins_id].idxs:
+                    if idx1 not in all_ins[ins_id].group_idxs[1]:
                         div1 = sys.float_info.max
-                        for idx2 in Ins[ins_id].idxs:
+                        for idx2 in all_ins[ins_id].idxs:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                         if div1 > max_div:
                             max_div = div1
                             max_idx = idx1
-                Ins[ins_id].idxs.add(max_idx)
-                Ins[ins_id].group_idxs[1].add(max_idx)
+                all_ins[ins_id].idxs.add(max_idx)
+                all_ins[ins_id].group_idxs[1].add(max_idx)
                 # print("add " + str(max_idx))
-            while len(Ins[ins_id].group_idxs[0]) > k[0]:
+            while len(all_ins[ins_id].group_idxs[0]) > k[0]:
                 min_div = sys.float_info.max
                 min_idx = -1
-                for idx1 in Ins[ins_id].group_idxs[0]:
+                for idx1 in all_ins[ins_id].group_idxs[0]:
                     div1 = sys.float_info.max
-                    for idx2 in Ins[ins_id].idxs:
+                    for idx2 in all_ins[ins_id].idxs:
                         if idx1 != idx2:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                     if div1 < min_div:
                         min_div = div1
                         min_idx = idx1
-                Ins[ins_id].idxs.remove(min_idx)
-                Ins[ins_id].group_idxs[0].remove(min_idx)
+                all_ins[ins_id].idxs.remove(min_idx)
+                all_ins[ins_id].group_idxs[0].remove(min_idx)
                 # print("remove " + str(min_idx))
-            while len(Ins[ins_id].group_idxs[1]) > k[1]:
+            while len(all_ins[ins_id].group_idxs[1]) > k[1]:
                 min_div = sys.float_info.max
                 min_idx = -1
-                for idx1 in Ins[ins_id].group_idxs[1]:
+                for idx1 in all_ins[ins_id].group_idxs[1]:
                     div1 = sys.float_info.max
-                    for idx2 in Ins[ins_id].idxs:
+                    for idx2 in all_ins[ins_id].idxs:
                         if idx1 != idx2:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                     if div1 < min_div:
                         min_div = div1
                         min_idx = idx1
-                Ins[ins_id].idxs.remove(min_idx)
-                Ins[ins_id].group_idxs[1].remove(min_idx)
+                all_ins[ins_id].idxs.remove(min_idx)
+                all_ins[ins_id].group_idxs[1].remove(min_idx)
                 # print("remove " + str(min_idx))
-            # print(Ins[ins_id].idxs)
-            ins_div = diversity(X, Ins[ins_id].idxs, dist)
+            # print(all_ins[ins_id].idxs)
+            ins_div = diversity(X, all_ins[ins_id].idxs, dist)
             if ins_div > sol_div:
                 sol_idx = ins_id
                 sol_div = ins_div
         else:
             # print("Case 3")
-            while len(Ins[ins_id].group_idxs[0]) < k[0]:
+            while len(all_ins[ins_id].group_idxs[0]) < k[0]:
                 max_div = 0.0
                 max_idx = -1
-                for idx1 in GroupI[0][ins_id].idxs:
-                    if idx1 not in Ins[ins_id].group_idxs[0]:
+                for idx1 in group_ins[0][ins_id].idxs:
+                    if idx1 not in all_ins[ins_id].group_idxs[0]:
                         div1 = sys.float_info.max
-                        for idx2 in Ins[ins_id].group_idxs[0]:
+                        for idx2 in all_ins[ins_id].group_idxs[0]:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                         if div1 > max_div:
                             max_div = div1
                             max_idx = idx1
-                Ins[ins_id].idxs.add(max_idx)
-                Ins[ins_id].group_idxs[0].add(max_idx)
+                all_ins[ins_id].idxs.add(max_idx)
+                all_ins[ins_id].group_idxs[0].add(max_idx)
                 # print("add " + str(max_idx))
-            while len(Ins[ins_id].group_idxs[1]) < k[1]:
+            while len(all_ins[ins_id].group_idxs[1]) < k[1]:
                 max_div = 0.0
                 max_idx = -1
-                for idx1 in GroupI[1][ins_id].idxs:
-                    if idx1 not in Ins[ins_id].group_idxs[1]:
+                for idx1 in group_ins[1][ins_id].idxs:
+                    if idx1 not in all_ins[ins_id].group_idxs[1]:
                         div1 = sys.float_info.max
-                        for idx2 in Ins[ins_id].group_idxs[1]:
+                        for idx2 in all_ins[ins_id].group_idxs[1]:
                             div1 = min(div1, dist(X[idx1], X[idx2]))
                         if div1 > max_div:
                             max_div = div1
                             max_idx = idx1
-                Ins[ins_id].idxs.add(max_idx)
-                Ins[ins_id].group_idxs[1].add(max_idx)
+                all_ins[ins_id].idxs.add(max_idx)
+                all_ins[ins_id].group_idxs[1].add(max_idx)
                 # print("add " + str(max_idx))
-            while len(Ins[ins_id].group_idxs[0]) > k[0]:
+            while len(all_ins[ins_id].group_idxs[0]) > k[0]:
                 min_div = sys.float_info.max
                 min_idx = -1
-                for idx1 in Ins[ins_id].group_idxs[0]:
+                for idx1 in all_ins[ins_id].group_idxs[0]:
                     div1 = sys.float_info.max
-                    for idx2 in Ins[ins_id].group_idxs[1]:
+                    for idx2 in all_ins[ins_id].group_idxs[1]:
                         div1 = min(div1, dist(X[idx1], X[idx2]))
                     if div1 < min_div:
                         min_div = div1
                         min_idx = idx1
-                Ins[ins_id].idxs.remove(min_idx)
-                Ins[ins_id].group_idxs[0].remove(min_idx)
+                all_ins[ins_id].idxs.remove(min_idx)
+                all_ins[ins_id].group_idxs[0].remove(min_idx)
                 # print("remove " + str(min_idx))
-            while len(Ins[ins_id].group_idxs[1]) > k[1]:
+            while len(all_ins[ins_id].group_idxs[1]) > k[1]:
                 min_div = sys.float_info.max
                 min_idx = -1
-                for idx1 in Ins[ins_id].group_idxs[1]:
+                for idx1 in all_ins[ins_id].group_idxs[1]:
                     div1 = sys.float_info.max
-                    for idx2 in Ins[ins_id].group_idxs[0]:
+                    for idx2 in all_ins[ins_id].group_idxs[0]:
                         div1 = min(div1, dist(X[idx1], X[idx2]))
                     if div1 < min_div:
                         min_div = div1
                         min_idx = idx1
-                Ins[ins_id].idxs.remove(min_idx)
-                Ins[ins_id].group_idxs[1].remove(min_idx)
+                all_ins[ins_id].idxs.remove(min_idx)
+                all_ins[ins_id].group_idxs[1].remove(min_idx)
                 # print("remove " + str(min_idx))
-            ins_div = diversity(X, Ins[ins_id].idxs, dist)
+            ins_div = diversity(X, all_ins[ins_id].idxs, dist)
             if ins_div > sol_div:
                 sol_idx = ins_id
                 sol_div = ins_div
     t2 = time.perf_counter()
-    return Ins[sol_idx].idxs, sol_div, (t1 - t0), (t2 - t1)
+    return all_ins[sol_idx].idxs, sol_div, (t1 - t0), (t2 - t1)
 
 
 def diversity(X, idxs, dist):
