@@ -184,8 +184,8 @@ def FairFlow(X, m, k, dist):
             for c2 in range(m):
                 for i2 in range(sum_k):
                     dist_matrix[c1 * sum_k + i1][c2 * sum_k + i2] = dist(X[S[c1][i1]], X[S[c2][i2]])
-    dist_array = np.sort(dist_matrix.flatten())
-    lower = sum_k * m
+    dist_array = np.sort(list(set(dist_matrix.flatten())))
+    lower = 0
     upper = len(dist_array) - 1
     sol = []
     div_sol = 0.0
@@ -237,19 +237,21 @@ def FairFlow(X, m, k, dist):
             upper = mid
         else:
             lower = mid
-            if lower >= upper - 1:
-                for c in range(m):
-                    for j in range(len(C)):
-                        if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and \
-                                flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
-                            for s_idx in Z[c]:
-                                if s_idx in C[j]:
-                                    sol.append(s_idx)
-                                    break
-                if len(sol) != sum_k:
-                    print("There are some errors in flow_dict")
-                else:
-                    div_sol = diversity(X, sol, dist)
+            cur_sol = []
+            for c in range(m):
+                for j in range(len(C)):
+                    if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
+                        for s_idx in Z[c]:
+                            if s_idx in C[j]:
+                                cur_sol.append(s_idx)
+                                break
+            if len(cur_sol) != sum_k:
+                print("There are some errors in flow_dict")
+            else:
+                cur_div = diversity(X, cur_sol, dist)
+                if cur_div > div_sol:
+                    sol = cur_sol
+                    div_sol = cur_div
     t1 = time.perf_counter()
     return sol, div_sol, (t1 - t0)
 
