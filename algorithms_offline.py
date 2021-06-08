@@ -175,8 +175,8 @@ def FairFlow(X, m, k, dist):
         Sc, divc = GMM_color(X, color=c, k=sum_k, init=[], dist=dist)
         S.append(Sc)
         Div.append(divc)
-    print(S)
-    print(Div)
+    # print(S)
+    # print(Div)
     dist_matrix = np.empty([sum_k * m, sum_k * m])
     for c1 in range(m):
         for i1 in range(sum_k):
@@ -193,7 +193,7 @@ def FairFlow(X, m, k, dist):
         gamma = dist_array[mid]
         dist1 = m * gamma / (3 * m - 1)
         dist2 = gamma / (3 * m - 1)
-        print(mid, gamma, dist1, dist2)
+        # print(mid, gamma, dist1, dist2)
         Z = []
         GZ = nx.Graph()
         for c in range(m):
@@ -205,7 +205,7 @@ def FairFlow(X, m, k, dist):
                 else:
                     break
             Z.append(Zc)
-        print(Z)
+        # print(Z)
         for c1 in range(m):
             for i1 in range(len(Z[c1])):
                 for c2 in range(m):
@@ -215,7 +215,7 @@ def FairFlow(X, m, k, dist):
         C = []
         for cc in nx.connected_components(GZ):
             C.append(set(cc))
-        print(C)
+        # print(C)
         FlowG = nx.DiGraph()
         FlowG.add_node("a")
         FlowG.add_node("b")
@@ -231,7 +231,7 @@ def FairFlow(X, m, k, dist):
                         FlowG.add_edge("u" + str(c), "v" + str(j), capacity=1)
                         break
         flow_size, flow_dict = nx.maximum_flow(FlowG, "a", "b")
-        print(flow_size, flow_dict)
+        # print(flow_size, flow_dict)
         if flow_size < sum_k - 0.5:
             upper = mid
         else:
@@ -244,10 +244,10 @@ def FairFlow(X, m, k, dist):
                                 if s_idx in C[j]:
                                     sol.append(s_idx)
                                     break
-            if len(sol) < sum_k:
-                print("There are some errors in flow_dict")
-            else:
-                div_sol = diversity(X, sol, dist)
+                if len(sol) != sum_k:
+                    print("There are some errors in flow_dict")
+                else:
+                    div_sol = diversity(X, sol, dist)
     t1 = time.perf_counter()
     return sol, div_sol, (t1 - t0)
 
