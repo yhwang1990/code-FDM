@@ -240,7 +240,8 @@ def FairFlow(X, m, k, dist):
             if lower >= upper - 1:
                 for c in range(m):
                     for j in range(len(C)):
-                        if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
+                        if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and \
+                                flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
                             for s_idx in Z[c]:
                                 if s_idx in C[j]:
                                     sol.append(s_idx)
