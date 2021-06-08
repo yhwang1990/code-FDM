@@ -419,7 +419,7 @@ if __name__ == "__main__":
     # print(utils.diversity(solution, utils.euclidean_dist))
 
     solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2, dist=utils.euclidean_dist,
-                                                                 eps=0.1, dmax=17.0, dmin=8.0)
+                                                                   eps=0.1, dmax=17.0, dmin=8.0)
     print(solf3, div_solf3, stream_time3, post_time3)
     # solution = []
     # for i in solf3:
