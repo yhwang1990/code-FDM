@@ -288,11 +288,11 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                     gins.idxs.add(x.idx)
                     gins.div = min(gins.div, div_x)
     t1 = time.perf_counter()
-    for ins_id in range(len(all_ins)):
-        print(ins_id, all_ins[ins_id].mu)
-        print(all_ins[ins_id].idxs)
-        for c in range(m):
-            print(group_ins[c][ins_id].idxs)
+    # for ins_id in range(len(all_ins)):
+    #     print(ins_id, all_ins[ins_id].mu)
+    #     print(all_ins[ins_id].idxs)
+    #     for c in range(m):
+    #         print(group_ins[c][ins_id].idxs)
     # post-processing
     sol = None
     sol_div = 0.0
@@ -303,13 +303,13 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                 hasValidSol = False
                 break
         if not hasValidSol:
-            print("No valid solution")
+            # print("No valid solution")
             continue
         S_all = set()
         S_all.update(all_ins[ins_id].idxs)
         for c in range(m):
             S_all.update(group_ins[c][ins_id].idxs)
-        print(S_all)
+        # print(S_all)
         G1 = nx.Graph()
         for idx1 in S_all:
             G1.add_node(idx1)
@@ -319,12 +319,12 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
         P = []
         for p in nx.connected_components(G1):
             P.append(set(p))
-        print(P)
+        # print(P)
         dict_par = dict()
         for j in range(len(P)):
             for s_idx in P[j]:
                 dict_par[s_idx] = j
-        print(dict_par)
+        # print(dict_par)
         S_prime = set()
         num_elem_col = np.zeros(m)
         for c in range(m):
@@ -337,7 +337,7 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                     num_elem_col[c] += 1
                     if num_elem_col[c] == k[c]:
                         break
-        print(S_prime, num_elem_col)
+        # print(S_prime, num_elem_col)
         if len(S_prime) < sum_k:
             X1 = set()
             X2 = set()
@@ -352,7 +352,7 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                 if s_idx not in S_prime and s_par not in P_prime:
                     X2.add(s_idx)
             cand = X1.intersection(X2)
-            print(cand, X1, X2)
+            # print(cand, X1, X2)
             while len(cand) > 0:
                 max_idx = -1
                 max_div = 0.0
@@ -367,17 +367,17 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                 max_par = dict_par[max_idx]
                 S_prime.add(max_idx)
                 num_elem_col[max_col] += 1
-                print(max_idx, max_col, max_par, S_prime, num_elem_col)
+                # print(max_idx, max_col, max_par, S_prime, num_elem_col)
                 if num_elem_col[max_col] == k[max_col]:
                     for s_idx in group_ins[max_col][ins_id].idxs:
                         X1.discard(s_idx)
                 for s_idx in P[max_par]:
                     X2.discard(s_idx)
                 cand = X1.intersection(X2)
-                print(cand, X1, X2)
+                # print(cand, X1, X2)
         if len(S_prime) == sum_k:
             div_s = diversity(X, S_prime, dist)
-            print(S_prime, div_s)
+            # print(S_prime, div_s)
             if div_s > sol_div:
                 sol = S_prime
                 sol_div = div_s
@@ -402,15 +402,16 @@ if __name__ == "__main__":
             features = [float(row[2]), float(row[3])]
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
-    solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
-                                                dmin=5.0)
-    print(solf, div_solf, elapsed_time)
+
+    # solf, div_solf, elapsed_time = StreamDivMax(X=elements, k=5, dist=utils.euclidean_dist, eps=0.1, dmax=15.0,
+    #                                             dmin=5.0)
+    # print(solf, div_solf, elapsed_time)
     # solution = []
     # for i in solf:
     #     solution.append(elements[i])
     # print(utils.diversity(solution, utils.euclidean_dist))
     solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist,
-                                                                 eps=0.1, dmax=15.0, dmin=5.0)
+                                                                 eps=0.1, dmax=17.0, dmin=8.0)
     print(solf2, div_solf2, stream_time, post_time)
     # solution.clear()
     # for i in solf2:
@@ -418,9 +419,9 @@ if __name__ == "__main__":
     # print(utils.diversity(solution, utils.euclidean_dist))
 
     solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2, dist=utils.euclidean_dist,
-                                                                 eps=0.1, dmax=15.0, dmin=5.0)
+                                                                 eps=0.1, dmax=17.0, dmin=8.0)
     print(solf3, div_solf3, stream_time3, post_time3)
-    solution = []
-    for i in solf3:
-        solution.append(elements[i])
-    print(utils.diversity(solution, utils.euclidean_dist))
+    # solution = []
+    # for i in solf3:
+    #     solution.append(elements[i])
+    # print(utils.diversity(solution, utils.euclidean_dist))

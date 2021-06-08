@@ -270,14 +270,20 @@ if __name__ == "__main__":
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
 
-    solf, div_solf, elapsed_time = FairSwap(X=elements, k=[2, 3], dist=utils.euclidean_dist)
-    print(solf, div_solf, elapsed_time)
+    sol0, div_sol0 = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
+    print(sol0, div_sol0[-1])
 
-    # sol0, div_sol0 = GMM(X=elements, k=5, init=[], dist=utils.euclidean_dist)
-    # print(sol0, div_sol0[-1])
-    #
+    sol1, div_sol1 = GMM_color(X=elements, color=0, k=5, init=[], dist=utils.euclidean_dist)
+    print(sol1, div_sol1[-1])
+
+    sol2, div_sol2 = GMM_color(X=elements, color=1, k=5, init=[], dist=utils.euclidean_dist)
+    print(sol2, div_sol2[-1])
+
+    # solf, div_solf, elapsed_time = FairSwap(X=elements, k=[2, 3], dist=utils.euclidean_dist)
+    # print(solf, div_solf, elapsed_time)
+
     # sol1, div_sol1, elapsed_time1 = FairGMM(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
     # print(sol1, div_sol1, elapsed_time1)
 
-    solf2, div_solf2, elapsed_time2 = FairFlow(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
-    print(solf2, div_solf2, elapsed_time2)
+    # solf2, div_solf2, elapsed_time2 = FairFlow(X=elements, m=2, k=[2, 3], dist=utils.euclidean_dist)
+    # print(solf2, div_solf2, elapsed_time2)
