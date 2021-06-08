@@ -399,6 +399,8 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
                             S_prime.remove(s_idx)
                         else:
                             S_prime.add(s_idx)
+                if len(S_prime) == sum_k:
+                    break
                 P_prime.clear()
                 X1.clear()
                 X2.clear()
@@ -450,11 +452,11 @@ if __name__ == "__main__":
         #                                             dmin=5.0)
         # print(solf, div_solf, elapsed_time)
 
-        solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[2, 3], dist=utils.euclidean_dist,
-                                                                     eps=0.1, dmax=15.0, dmin=5.0)
+        solf2, div_solf2, stream_time, post_time = StreamFairDivMax1(X=elements, k=[5, 5], dist=utils.euclidean_dist,
+                                                                     eps=0.1, dmax=7.5, dmin=2.5)
         print(solf2, div_solf2, stream_time, post_time)
 
-        solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[2, 3], m=2,
+        solf3, div_solf3, stream_time3, post_time3 = StreamFairDivMax2(X=elements, k=[5, 5], m=2,
                                                                        dist=utils.euclidean_dist,
-                                                                       eps=0.1, dmax=15.0, dmin=5.0)
+                                                                       eps=0.1, dmax=7.5, dmin=2.5)
         print(solf3, div_solf3, stream_time3, post_time3)
