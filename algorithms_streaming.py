@@ -5,11 +5,15 @@ import time
 import numpy as np
 import networkx as nx
 import random
+from typing import Any, Callable, Iterable, List
+
 import utils
+
+ElemList = List[utils.Element]
 
 
 class Instance:
-    def __init__(self, k, mu, m):
+    def __init__(self, k: int, mu: float, m: int):
         self.k = k
         self.mu = mu
         self.div = sys.float_info.max
@@ -20,11 +24,11 @@ class Instance:
                 self.group_idxs.append(set())
 
 
-def StreamDivMax(X, k, dist, eps, dmax, dmin):
+def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (
+        List[int], float, float):
     t0 = time.perf_counter()
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
-    print(zmin, zmax)
     Ins = []
     for z in range(zmin, zmax + 1):
         ins = Instance(k, mu=math.pow(1 - eps, z), m=1)
@@ -54,7 +58,8 @@ def StreamDivMax(X, k, dist, eps, dmax, dmin):
     return max_inst.idxs, max_inst.div, (t1 - t0)
 
 
-def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
+def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float,
+                      dmin: float) -> (List[int], float, float, float):
     if len(k) != 2:
         print("The length of k must be 2")
         return list(), 0, 0
@@ -236,7 +241,8 @@ def StreamFairDivMax1(X, k, dist, eps, dmax, dmin):
     return all_ins[sol_idx].idxs, sol_div, (t1 - t0), (t2 - t1)
 
 
-def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
+def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float,
+                      dmin: float) -> (List[int], float, float, float):
     t0 = time.perf_counter()
     # Initialization
     sum_k = sum(k)
@@ -416,7 +422,7 @@ def StreamFairDivMax2(X, k, m, dist, eps, dmax, dmin):
     return sol, sol_div, (t1 - t0), (t2 - t1)
 
 
-def diversity(X, idxs, dist):
+def diversity(X: ElemList, idxs: Iterable[int], dist: Callable[[Any, Any], float]) -> float:
     div_val = sys.float_info.max
     for idx1 in idxs:
         for idx2 in idxs:
@@ -440,11 +446,11 @@ if __name__ == "__main__":
             elements[new_idx].idx = new_idx
         print(elements[0].idx, elements[0].color, elements[0].features)
 
-        # solf1, div_solf1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5], dist=utils.euclidean_dist,
+        # sol_f1, div_sol_f1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5], dist=utils.euclidean_dist,
         #                                                                eps=0.1, dmax=7.5, dmin=2.5)
-        # print(solf1, div_solf1, stream_time1, post_time1)
+        # print(sol_f1, div_sol_f1, stream_time1, post_time1)
 
-        solf2, div_solf2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[5, 5], m=2,
-                                                                       dist=utils.euclidean_dist,
-                                                                       eps=0.1, dmax=7.5, dmin=2.5)
-        print(solf2, div_solf2, stream_time2, post_time2)
+        sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[5, 5], m=2,
+                                                                         dist=utils.euclidean_dist,
+                                                                         eps=0.1, dmax=7.5, dmin=2.5)
+        print(sol_f2, div_sol_f2, stream_time2, post_time2)

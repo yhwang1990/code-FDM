@@ -11,10 +11,9 @@ from typing import Any, Callable, List
 import utils
 
 ElemList = List[utils.Element]
-IdxList = List[int]
 
 
-def GMM(X: ElemList, k: int, init: IdxList, dist: Callable[[Any, Any], float]) -> (IdxList, float):
+def GMM(X: ElemList, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float):
     S = []
     div = []
     dist_array = np.full(len(X), sys.float_info.max)
@@ -40,7 +39,7 @@ def GMM(X: ElemList, k: int, init: IdxList, dist: Callable[[Any, Any], float]) -
     return S, div
 
 
-def GMMC(X: ElemList, color: int, k: int, init: IdxList, dist: Callable[[Any, Any], float]) -> (List, float):
+def GMMC(X: ElemList, color: int, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float):
     S = []
     div = []
     dist_array = np.full(len(X), sys.float_info.max)
@@ -79,7 +78,7 @@ def GMMC(X: ElemList, color: int, k: int, init: IdxList, dist: Callable[[Any, An
     return S, div
 
 
-def FairSwap(X: ElemList, k: List[int], dist: Callable[[Any, Any], float]) -> (IdxList, float, float):
+def FairSwap(X: ElemList, k: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float, float):
     if len(k) != 2:
         print("The length of k must be 2")
         return list(), 0, 0
@@ -138,7 +137,7 @@ def FairSwap(X: ElemList, k: List[int], dist: Callable[[Any, Any], float]) -> (I
         return S, div_S, (t1 - t0)
 
 
-def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]) -> (IdxList, float, float):
+def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float, float):
     if len(k) != m:
         print("The length of k must be equal to m")
         return list(), 0, 0
@@ -174,7 +173,7 @@ def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]
     return max_sol, max_div, (t1 - t0)
 
 
-def FairFlow(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]) -> (IdxList, float, float):
+def FairFlow(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float, float):
     t0 = time.perf_counter()
     sum_k = sum(k)
     S = []
@@ -261,7 +260,7 @@ def FairFlow(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float
     return sol, div_sol, (t1 - t0)
 
 
-def diversity(X: ElemList, idxs: IdxList, dist: Callable[[Any, Any], float]) -> float:
+def diversity(X: ElemList, idxs: List[int], dist: Callable[[Any, Any], float]) -> float:
     div_val = sys.float_info.max
     for id1 in idxs:
         for id2 in idxs:
