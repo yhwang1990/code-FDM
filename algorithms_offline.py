@@ -141,7 +141,6 @@ def FairGMM(X, m, k, dist):
     # print(num_enum)
     if num_enum > 1e6:
         return list(), 0, 0
-
     t0 = time.perf_counter()
     S = []
     for c in range(m):
