@@ -176,8 +176,6 @@ def FairFlow(X, m, k, dist):
         Sc, divc = GMM_color(X, color=c, k=sum_k, init=[], dist=dist)
         S.append(Sc)
         Div.append(divc)
-    # print(S)
-    # print(Div)
     dist_matrix = np.empty([sum_k * m, sum_k * m])
     for c1 in range(m):
         for i1 in range(sum_k):
@@ -206,7 +204,6 @@ def FairFlow(X, m, k, dist):
                 else:
                     break
             Z.append(Zc)
-        # print(Z)
         for c1 in range(m):
             for i1 in range(len(Z[c1])):
                 for c2 in range(m):
@@ -216,7 +213,6 @@ def FairFlow(X, m, k, dist):
         C = []
         for cc in nx.connected_components(GZ):
             C.append(set(cc))
-        # print(C)
         FlowG = nx.DiGraph()
         FlowG.add_node("a")
         FlowG.add_node("b")
@@ -240,7 +236,9 @@ def FairFlow(X, m, k, dist):
             cur_sol = []
             for c in range(m):
                 for j in range(len(C)):
-                    if "u" + str(c) in flow_dict.keys() and "v" + str(j) in flow_dict["u" + str(c)].keys() and flow_dict["u" + str(c)]["v" + str(j)] > 0.5:
+                    node1 = "u" + str(c)
+                    node2 = "v" + str(j)
+                    if node1 in flow_dict.keys() and node2 in flow_dict[node1].keys() and flow_dict[node1][node2] > 0.5:
                         for s_idx in Z[c]:
                             if s_idx in C[j]:
                                 cur_sol.append(s_idx)
