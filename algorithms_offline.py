@@ -1,12 +1,11 @@
-import csv
 import itertools
 import math
 import sys
-import numpy as np
-import networkx as nx
 import time
-import random
 from typing import Any, Callable, List
+
+import networkx as nx
+import numpy as np
 
 import utils
 
@@ -272,37 +271,37 @@ def diversity(X: ElemList, idxs: List[int], dist: Callable[[Any, Any], float]) -
     return div_val
 
 
-if __name__ == "__main__":
-    elements = []
-    with open("datasets/blobs_n100_m5.csv") as fileobj:
-        csvreader = csv.reader(fileobj, delimiter=',')
-        for row in csvreader:
-            features = [float(row[2]), float(row[3])]
-            elem = utils.Element(int(row[0]), int(row[1]), features)
-            elements.append(elem)
-
-    for run in range(10):
-        random.Random(run).shuffle(elements)
-        for new_idx in range(len(elements)):
-            elements[new_idx].idx = new_idx
-        print(elements[0].idx, elements[0].color, elements[0].features)
-
-        solution, value = GMM(X=elements, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-        solution, value = GMMC(X=elements, color=0, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-        solution, value = GMMC(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-        solution, value = GMMC(X=elements, color=2, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-        solution, value = GMMC(X=elements, color=3, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-        solution, value = GMMC(X=elements, color=4, k=10, init=[], dist=utils.euclidean_dist)
-        print(solution, value[-1])
-
-        # sol_f, div_sol_f, elapsed_time = FairSwap(X=elements, k=[5, 5], dist=utils.euclidean_dist)
-        # print(sol_f, div_sol_f, elapsed_time)
-        # sol_f, div_sol_f, elapsed_time = FairGMM(X=elements, m=5, k=[1, 1, 1, 1, 1], dist=utils.euclidean_dist)
-        # print(sol_f, div_sol_f, elapsed_time)
-        sol_f, div_sol_f, elapsed_time = FairFlow(X=elements, m=5, k=[2, 2, 2, 2, 2], dist=utils.euclidean_dist)
-        print(sol_f, div_sol_f, elapsed_time)
+# if __name__ == "__main__":
+#     elements = []
+#     with open("datasets/blobs_n100_m5.csv") as fileobj:
+#         csvreader = csv.reader(fileobj, delimiter=',')
+#         for row in csvreader:
+#             features = [float(row[2]), float(row[3])]
+#             elem = utils.Element(int(row[0]), int(row[1]), features)
+#             elements.append(elem)
+#
+#     for run in range(10):
+#         random.Random(run).shuffle(elements)
+#         for new_idx in range(len(elements)):
+#             elements[new_idx].idx = new_idx
+#         print(elements[0].idx, elements[0].color, elements[0].features)
+#
+#         solution, value = GMM(X=elements, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#         solution, value = GMMC(X=elements, color=0, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#         solution, value = GMMC(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#         solution, value = GMMC(X=elements, color=2, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#         solution, value = GMMC(X=elements, color=3, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#         solution, value = GMMC(X=elements, color=4, k=10, init=[], dist=utils.euclidean_dist)
+#         print(solution, value[-1])
+#
+#         sol_f, div_sol_f, elapsed_time = FairSwap(X=elements, k=[5, 5], dist=utils.euclidean_dist)
+#         print(sol_f, div_sol_f, elapsed_time)
+#         sol_f, div_sol_f, elapsed_time = FairGMM(X=elements, m=5, k=[1, 1, 1, 1, 1], dist=utils.euclidean_dist)
+#         print(sol_f, div_sol_f, elapsed_time)
+#         sol_f, div_sol_f, elapsed_time = FairFlow(X=elements, m=5, k=[2, 2, 2, 2, 2], dist=utils.euclidean_dist)
+#         print(sol_f, div_sol_f, elapsed_time)

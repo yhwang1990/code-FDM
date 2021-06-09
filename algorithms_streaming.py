@@ -1,11 +1,10 @@
-import csv
 import math
 import sys
 import time
-import numpy as np
-import networkx as nx
-import random
 from typing import Any, Callable, Iterable, List, Set
+
+import networkx as nx
+import numpy as np
 
 import utils
 
@@ -429,26 +428,26 @@ def diversity(X: ElemList, idxs: Iterable[int], dist: Callable[[Any, Any], float
     return div_val
 
 
-if __name__ == "__main__":
-    elements = []
-    with open("datasets/blobs_n100_m5.csv") as fileobj:
-        csvreader = csv.reader(fileobj, delimiter=',')
-        for row in csvreader:
-            features = [float(row[2]), float(row[3])]
-            elem = utils.Element(int(row[0]), int(row[1]), features)
-            elements.append(elem)
-
-    for run in range(10):
-        random.Random(run).shuffle(elements)
-        for new_idx in range(len(elements)):
-            elements[new_idx].idx = new_idx
-        print(elements[0].idx, elements[0].color, elements[0].features)
-
-        # sol_f1, div_sol_f1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5],
-        # dist=utils.euclidean_dist, eps=0.1, dmax=7.5, dmin=2.5)
-        # print(sol_f1, div_sol_f1, stream_time1, post_time1)
-
-        sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[2, 2, 2, 2, 2], m=5,
-                                                                         dist=utils.euclidean_dist,
-                                                                         eps=0.1, dmax=6.0, dmin=2.0)
-        print(sol_f2, div_sol_f2, stream_time2, post_time2)
+# if __name__ == "__main__":
+#     elements = []
+#     with open("datasets/blobs_n100_m5.csv") as fileobj:
+#         csvreader = csv.reader(fileobj, delimiter=',')
+#         for row in csvreader:
+#             features = [float(row[2]), float(row[3])]
+#             elem = utils.Element(int(row[0]), int(row[1]), features)
+#             elements.append(elem)
+#
+#     for run in range(10):
+#         random.Random(run).shuffle(elements)
+#         for new_idx in range(len(elements)):
+#             elements[new_idx].idx = new_idx
+#         print(elements[0].idx, elements[0].color, elements[0].features)
+#
+#         # sol_f1, div_sol_f1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5],
+#         # dist=utils.euclidean_dist, eps=0.1, dmax=7.5, dmin=2.5)
+#         # print(sol_f1, div_sol_f1, stream_time1, post_time1)
+#
+#         sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[2, 2, 2, 2, 2], m=5,
+#                                                                          dist=utils.euclidean_dist,
+#                                                                          eps=0.1, dmax=6.0, dmin=2.0)
+#         print(sol_f2, div_sol_f2, stream_time2, post_time2)
