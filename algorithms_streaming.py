@@ -25,8 +25,7 @@ class Instance:
 
 
 def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (
-        List[int], float, float):
-    t0 = time.perf_counter()
+        List[int], float):
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
     zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     Ins = []
@@ -54,8 +53,7 @@ def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: fl
         if len(ins.idxs) == k and ins.div > max_div:
             max_inst = ins
             max_div = ins.div
-    t1 = time.perf_counter()
-    return max_inst.idxs, max_inst.div, (t1 - t0)
+    return max_inst.idxs, max_inst.div
 
 
 def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float,
@@ -238,7 +236,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
                 sol_idx = ins_id
                 sol_div = ins_div
     t2 = time.perf_counter()
-    return all_ins[sol_idx].idxs, sol_div, (t1 - t0), (t2 - t1)
+    return all_ins[sol_idx].idxs, sol_div, (t1 - t0) / len(X), (t2 - t1)
 
 
 def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float,
@@ -419,7 +417,7 @@ def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, An
                 sol = S_prime
                 sol_div = div_s
     t2 = time.perf_counter()
-    return sol, sol_div, (t1 - t0), (t2 - t1)
+    return sol, sol_div, (t1 - t0) / len(X), (t2 - t1)
 
 
 def diversity(X: ElemList, idxs: Iterable[int], dist: Callable[[Any, Any], float]) -> float:
@@ -446,8 +444,8 @@ if __name__ == "__main__":
             elements[new_idx].idx = new_idx
         print(elements[0].idx, elements[0].color, elements[0].features)
 
-        # sol_f1, div_sol_f1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5], dist=utils.euclidean_dist,
-        #                                                                eps=0.1, dmax=7.5, dmin=2.5)
+        # sol_f1, div_sol_f1, stream_time1, post_time1 = StreamFairDivMax1(X=elements, k=[5, 5],
+        # dist=utils.euclidean_dist, eps=0.1, dmax=7.5, dmin=2.5)
         # print(sol_f1, div_sol_f1, stream_time1, post_time1)
 
         sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[2, 2, 2, 2, 2], m=5,
