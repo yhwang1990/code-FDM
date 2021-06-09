@@ -56,10 +56,10 @@ def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: fl
 
 
 def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (Set[int], float, float, float):
+                      dmin: float) -> (set, float, int, float, float):
     if len(k) != 2:
         print("The length of k must be 2")
-        return list(), 0, 0
+        return set(), 0.0, 0, 0.0, 0.0
     t0 = time.perf_counter()
     # Initialization
     zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
@@ -69,7 +69,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
     for z in range(zmin, zmax + 1):
         ins = Instance(k=k[0] + k[1], mu=math.pow(1 - eps, z), m=2)
         all_ins.append(ins)
-        for c in range(0, 2):
+        for c in range(2):
             gins = Instance(k=k[c], mu=math.pow(1 - eps, z), m=1)
             group_ins[c].append(gins)
     # Stream processing
@@ -105,7 +105,15 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
                     gins.idxs.add(x.idx)
                     gins.div = min(gins.div, div_x)
     t1 = time.perf_counter()
+    stream_time_per_elem = (t1 - t0) / len(X)
+    stored_elements = set()
+    for ins_id in range(len(all_ins)):
+        stored_elements.update(all_ins[ins_id].idxs)
+        for c in range(2):
+            stored_elements.update(group_ins[c][ins_id].idxs)
+    num_elements = len(stored_elements)
     # Post-processing (1): Find the lower index
+    t0 = time.perf_counter()
     lower = 0
     upper = len(all_ins) - 1
     while lower < upper - 1:
@@ -116,7 +124,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
         else:
             lower = mid
     # Post-processing (2): Balance each instance so that it is a fair solution.
-    sol_div = 0
+    sol_div = 0.0
     sol_idx = -1
     for ins_id in range(upper + 1):
         if len(all_ins[ins_id].group_idxs[0].union(group_ins[0][ins_id].idxs)) < k[0] or len(
@@ -234,12 +242,13 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
             if ins_div > sol_div:
                 sol_idx = ins_id
                 sol_div = ins_div
-    t2 = time.perf_counter()
-    return all_ins[sol_idx].idxs, sol_div, (t1 - t0) / len(X), (t2 - t1)
+    t1 = time.perf_counter()
+    post_time = t1 - t0
+    return all_ins[sol_idx].idxs, sol_div, num_elements, stream_time_per_elem, post_time
 
 
 def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (Set[int], float, float, float):
+                      dmin: float) -> (Set[int], float, int, float, float):
     t0 = time.perf_counter()
     # Initialization
     sum_k = sum(k)
@@ -289,7 +298,15 @@ def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, An
                     gins.idxs.add(x.idx)
                     gins.div = min(gins.div, div_x)
     t1 = time.perf_counter()
+    stream_time_per_elem = (t1 - t0) / len(X)
+    stored_elements = set()
+    for ins_id in range(len(all_ins)):
+        stored_elements.update(all_ins[ins_id].idxs)
+        for c in range(m):
+            stored_elements.update(group_ins[c][ins_id].idxs)
+    num_elements = len(stored_elements)
     # post-processing
+    t0 = time.perf_counter()
     sol = None
     sol_div = 0.0
     for ins_id in range(len(all_ins)):
@@ -415,8 +432,9 @@ def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, An
             if div_s > sol_div:
                 sol = S_prime
                 sol_div = div_s
-    t2 = time.perf_counter()
-    return sol, sol_div, (t1 - t0) / len(X), (t2 - t1)
+    t1 = time.perf_counter()
+    post_time = t1 - t0
+    return sol, sol_div, num_elements, stream_time_per_elem, post_time
 
 
 def diversity(X: ElemList, idxs: Iterable[int], dist: Callable[[Any, Any], float]) -> float:
