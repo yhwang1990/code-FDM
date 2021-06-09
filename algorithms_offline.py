@@ -271,7 +271,7 @@ def diversity(X: ElemList, idxs: List[int], dist: Callable[[Any, Any], float]) -
 
 if __name__ == "__main__":
     elements = []
-    with open("datasets/blobs_n100_m2.csv") as fileobj:
+    with open("datasets/blobs_n100_m5.csv") as fileobj:
         csvreader = csv.reader(fileobj, delimiter=',')
         for row in csvreader:
             features = [float(row[2]), float(row[3])]
@@ -284,16 +284,22 @@ if __name__ == "__main__":
             elements[new_idx].idx = new_idx
         print(elements[0].idx, elements[0].color, elements[0].features)
 
-        sol0, div_sol0 = GMM(X=elements, k=10, init=[], dist=utils.euclidean_dist)
-        print(sol0, div_sol0[-1])
-        sol1, div_sol1 = GMMC(X=elements, color=0, k=10, init=[], dist=utils.euclidean_dist)
-        print(sol1, div_sol1[-1])
-        sol2, div_sol2 = GMMC(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
-        print(sol2, div_sol2[-1])
+        sol, div_sol = GMM(X=elements, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
+        sol, div_sol = GMMC(X=elements, color=0, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
+        sol, div_sol = GMMC(X=elements, color=1, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
+        sol, div_sol = GMMC(X=elements, color=2, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
+        sol, div_sol = GMMC(X=elements, color=3, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
+        sol, div_sol = GMMC(X=elements, color=4, k=10, init=[], dist=utils.euclidean_dist)
+        print(sol, div_sol[-1])
 
-        sol_f, div_sol_f, elapsed_time = FairSwap(X=elements, k=[5, 5], dist=utils.euclidean_dist)
+        # sol_f, div_sol_f, elapsed_time = FairSwap(X=elements, k=[5, 5], dist=utils.euclidean_dist)
+        # print(sol_f, div_sol_f, elapsed_time)
+        # sol_f, div_sol_f, elapsed_time = FairGMM(X=elements, m=5, k=[1, 1, 1, 1, 1], dist=utils.euclidean_dist)
+        # print(sol_f, div_sol_f, elapsed_time)
+        sol_f, div_sol_f, elapsed_time = FairFlow(X=elements, m=5, k=[2, 2, 2, 2, 2], dist=utils.euclidean_dist)
         print(sol_f, div_sol_f, elapsed_time)
-        # sol_f1, div_sol_f1, elapsed_time1 = FairGMM(X=elements, m=2, k=[5, 5], dist=utils.euclidean_dist)
-        # print(sol_f1, div_sol_f1, elapsed_time1)
-        sol_f2, div_sol_f2, elapsed_time2 = FairFlow(X=elements, m=2, k=[5, 5], dist=utils.euclidean_dist)
-        print(sol_f2, div_sol_f2, elapsed_time2)

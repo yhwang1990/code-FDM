@@ -433,7 +433,7 @@ def diversity(X: ElemList, idxs: Iterable[int], dist: Callable[[Any, Any], float
 
 if __name__ == "__main__":
     elements = []
-    with open("datasets/blobs_n100_m2.csv") as fileobj:
+    with open("datasets/blobs_n100_m5.csv") as fileobj:
         csvreader = csv.reader(fileobj, delimiter=',')
         for row in csvreader:
             features = [float(row[2]), float(row[3])]
@@ -450,7 +450,7 @@ if __name__ == "__main__":
         #                                                                eps=0.1, dmax=7.5, dmin=2.5)
         # print(sol_f1, div_sol_f1, stream_time1, post_time1)
 
-        sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[5, 5], m=2,
+        sol_f2, div_sol_f2, stream_time2, post_time2 = StreamFairDivMax2(X=elements, k=[2, 2, 2, 2, 2], m=5,
                                                                          dist=utils.euclidean_dist,
-                                                                         eps=0.1, dmax=7.5, dmin=2.5)
+                                                                         eps=0.1, dmax=6.0, dmin=2.0)
         print(sol_f2, div_sol_f2, stream_time2, post_time2)
