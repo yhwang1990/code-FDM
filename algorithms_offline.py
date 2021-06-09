@@ -164,7 +164,7 @@ def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]
         for i in range(len(f_sols)):
             f_sols[i] = list(np.concatenate(f_sols[i]).flat)
     max_div = 0
-    max_sol = []
+    max_sol = None
     for f_sol in f_sols:
         div_f_sol = diversity(X, idxs=f_sol, dist=dist)
         if div_f_sol > max_div:
@@ -194,7 +194,7 @@ def FairFlow(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float
     dist_array = np.sort(list(set(dist_matrix.flatten())))
     lower = 0
     upper = len(dist_array) - 1
-    sol = []
+    sol = None
     div_sol = 0.0
     while lower < upper - 1:
         mid = (lower + upper) // 2
