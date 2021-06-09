@@ -5,7 +5,7 @@ import time
 import numpy as np
 import networkx as nx
 import random
-from typing import Any, Callable, Iterable, List
+from typing import Any, Callable, Iterable, List, Set
 
 import utils
 
@@ -59,7 +59,7 @@ def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: fl
 
 
 def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (List[int], float, float, float):
+                      dmin: float) -> (Set[int], float, float, float):
     if len(k) != 2:
         print("The length of k must be 2")
         return list(), 0, 0
@@ -242,7 +242,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
 
 
 def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (List[int], float, float, float):
+                      dmin: float) -> (Set[int], float, float, float):
     t0 = time.perf_counter()
     # Initialization
     sum_k = sum(k)
