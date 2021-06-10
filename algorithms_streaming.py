@@ -3,14 +3,14 @@ import math
 import random
 import sys
 import time
-from typing import Any, Callable, Iterable, List, Set
+from typing import Any, Callable, Iterable, List, Set, Union
 
 import networkx as nx
 import numpy as np
 
 import utils
 
-ElemList = List[utils.Element]
+ElemList = Union[List[utils.Element], List[utils.ElementSparse]]
 
 
 class Instance:
@@ -27,12 +27,12 @@ class Instance:
 
 def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (
         List[int], float):
-    zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
-    zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     Ins = []
-    for z in range(zmin, zmax + 1):
-        ins = Instance(k, mu=math.pow(1 - eps, z), m=1)
+    cur_d = dmax - 0.01
+    while cur_d > dmin:
+        ins = Instance(k, mu=cur_d, m=1)
         Ins.append(ins)
+        cur_d *= (1.0 - eps)
     for x in X:
         for ins in Ins:
             if len(ins.idxs) == 0:
@@ -64,16 +64,16 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
         return set(), 0.0, 0, 0.0, 0.0
     t0 = time.perf_counter()
     # Initialization
-    zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
-    zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     all_ins = []
     group_ins = [list(), list()]
-    for z in range(zmin, zmax + 1):
-        ins = Instance(k=k[0] + k[1], mu=math.pow(1 - eps, z), m=2)
+    cur_d = dmax - 0.01
+    while cur_d > dmin:
+        ins = Instance(k=k[0] + k[1], mu=cur_d, m=2)
         all_ins.append(ins)
         for c in range(2):
-            gins = Instance(k=k[c], mu=math.pow(1 - eps, z), m=1)
+            gins = Instance(k=k[c], mu=cur_d, m=1)
             group_ins[c].append(gins)
+        cur_d *= (1.0 - eps)
     # Stream processing
     for x in X:
         for ins in all_ins:
@@ -254,19 +254,19 @@ def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, An
     t0 = time.perf_counter()
     # Initialization
     sum_k = sum(k)
-    zmax = math.floor(math.log2(dmin) / math.log2(1 - eps))
-    zmin = math.ceil(math.log2(dmax) / math.log2(1 - eps))
     # print(zmin, zmax)
     all_ins = []
     group_ins = []
     for c in range(m):
         group_ins.append(list())
-    for z in range(zmin, zmax + 1):
-        ins = Instance(k=sum_k, mu=math.pow(1 - eps, z), m=m)
+    cur_d = dmax - 0.01
+    while cur_d > dmin:
+        ins = Instance(k=sum_k, mu=cur_d, m=m)
         all_ins.append(ins)
         for c in range(m):
-            gins = Instance(k=sum_k, mu=math.pow(1 - eps, z), m=1)
+            gins = Instance(k=sum_k, mu=cur_d, m=1)
             group_ins[c].append(gins)
+        cur_d *= (1.0 - eps)
     # Stream processing
     for x in X:
         for ins in all_ins:
