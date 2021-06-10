@@ -63,16 +63,20 @@ def cosine_dist(elem1: Element, elem2: Element) -> float:
 
 
 def cosine_dist_sparse(elem1: ElementSparse, elem2: ElementSparse) -> float:
-    inner_prod = 0.0
-    length1 = 0.0
-    length2 = 0.0
+    inner_prod = 0
+    length1 = 0
+    length2 = 0
     for j in elem1.features.keys():
         if j in elem2.features.keys():
             inner_prod += elem1.features[j] * elem2.features[j]
         length1 += elem1.features[j] * elem1.features[j]
     for j in elem2.features.keys():
         length2 += elem2.features[j] * elem2.features[j]
+    if length1 == 0 or length2 == 0:
+        return 0.0
     cosine = inner_prod / (np.sqrt(length1) * np.sqrt(length2))
+    if cosine > 1.0:
+        return 0.0
     return np.arccos(cosine)
 
 

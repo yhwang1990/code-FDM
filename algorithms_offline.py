@@ -2,14 +2,14 @@ import itertools
 import math
 import sys
 import time
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Union
 
 import networkx as nx
 import numpy as np
 
 import utils
 
-ElemList = List[utils.Element]
+ElemList = Union[List[utils.Element], List[utils.ElementSparse]]
 
 
 def GMM(X: ElemList, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float):
@@ -165,7 +165,7 @@ def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]
     max_div = 0
     max_sol = None
     for f_sol in f_sols:
-        div_f_sol = diversity(X, idxs=f_sol, dist=dist)
+        div_f_sol = diversity(X, idxs=list(f_sol), dist=dist)
         if div_f_sol > max_div:
             # print(div_f_sol)
             max_sol = f_sol
