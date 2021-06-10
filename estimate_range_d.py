@@ -136,12 +136,12 @@ for k in range(5, 51, 5):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
-        solution, value = algorithms_offline.GMM(X=elements, k=k, init=[], dist=utils.euclidean_dist)
+        solution, value = algorithms_offline.GMM(X=elements, k=k, init=[], dist=utils.manhattan_dist)
         print(solution, value[-1])
         div_min = min(div_min, value[-1])
         div_max = max(div_max, value[-1])
         for c in range(2):
-            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.euclidean_dist)
+            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.manhattan_dist)
             print(solution, value[-1])
             div_min = min(div_min, value[-1])
             div_max = max(div_max, value[-1])
@@ -167,7 +167,7 @@ for k in range(10, 51, 5):
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
         for c in range(7):
-            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.euclidean_dist)
+            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.manhattan_dist)
             print(solution, value[-1])
             div_min = min(div_min, value[-1])
             div_max = max(div_max, value[-1])
@@ -191,7 +191,7 @@ for k in range(15, 51, 5):
     for run in range(5):
         random.Random(run).shuffle(elements)
         for c in range(14):
-            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.euclidean_dist)
+            solution, value = algorithms_offline.GMMC(X=elements, color=c, k=k, init=[], dist=utils.manhattan_dist)
             print(solution, value[-1])
             div_min = min(div_min, value[-1])
             div_max = max(div_max, value[-1])
