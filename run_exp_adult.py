@@ -11,6 +11,8 @@ output = open("results_adult.csv", "a")
 writer = csv.writer(output)
 writer.writerow(["dataset", "group", "m", "k", "algorithm", "param_eps", "div", "num_elem", "time1", "time2", "time3"])
 
+output.flush()
+
 values_eps = [0.25, 0.2, 0.15, 0.1, 0.05]
 values_k = range(5, 51, 5)
 
@@ -43,6 +45,7 @@ for eps in values_eps:
         print(sol)
     writer.writerow(["Adult", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
     writer.writerow(["Adult", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    output.flush()
 
 # experiments on varying k
 for k in values_k:
@@ -79,6 +82,7 @@ for k in values_k:
     writer.writerow(["Adult", "Sex", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
     writer.writerow(["Adult", "Sex", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
     writer.writerow(["Adult", "Sex", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    output.flush()
 
 # read the Adult dataset grouped by race (m=5)
 elements.clear()
@@ -122,6 +126,7 @@ for k in values_k:
     writer.writerow(["Adult", "Race", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["Adult", "Race", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
     writer.writerow(["Adult", "Race", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    output.flush()
 
 # read the Adult dataset grouped by race (m=5)
 elements.clear()
@@ -149,6 +154,7 @@ for run in range(10):
     print(sol)
 writer.writerow(["Adult", "Both", m, 20, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
 writer.writerow(["Adult", "Both", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+output.flush()
 
 m = 2
 group_k = [13, 7]
@@ -176,6 +182,7 @@ writer.writerow(["Adult", "Sex_P", m, 20, "FairFlow", "-", np.average(fair_flow[
 writer.writerow(["Adult", "Sex_P", m, 20, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
 writer.writerow(["Adult", "Sex_P", m, 20, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
 writer.writerow(["Adult", "Sex_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+output.flush()
 
 m = 5
 group_k = [15, 1, 1, 2, 1]
@@ -195,3 +202,4 @@ for run in range(10):
 writer.writerow(["Adult", "Race_P", m, 20, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
 writer.writerow(["Adult", "Race_P", m, 20, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
 writer.writerow(["Adult", "Race_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+output.close()
