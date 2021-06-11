@@ -32,20 +32,20 @@ range_d_sex = {5: [5.0, 11.7], 10: [4.2, 8.8], 15: [3.7, 7.5], 20: [3.2, 6.5], 2
 m = 2
 
 # experiments on varying epsilon
-for eps in values_eps:
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    for run in range(10):
-        random.Random(run).shuffle(elements)
-        for new_idx in range(len(elements)):
-            elements[new_idx].idx = new_idx
-        sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=[10, 10], dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
-        print(sol)
-        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[10, 10], m=m, dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
-        print(sol)
-    writer.writerow(["Adult", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["Adult", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
-    output.flush()
+# for eps in values_eps:
+#     alg1 = np.zeros([4, 10])
+#     alg2 = np.zeros([4, 10])
+#     for run in range(10):
+#         random.Random(run).shuffle(elements)
+#         for new_idx in range(len(elements)):
+#             elements[new_idx].idx = new_idx
+#         sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=[10, 10], dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+#         print(sol)
+#         sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[10, 10], m=m, dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+#         print(sol)
+#     writer.writerow(["Adult", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+#     writer.writerow(["Adult", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+#     output.flush()
 
 # experiments on varying k
 for k in values_k:

@@ -1,11 +1,11 @@
 import itertools
-import math
 import sys
 import time
 from typing import Any, Callable, List, Union
 
 import networkx as nx
 import numpy as np
+from scipy.special import comb
 
 import utils
 
@@ -144,7 +144,7 @@ def FairGMM(X: ElemList, m: int, k: List[int], dist: Callable[[Any, Any], float]
     sum_k = sum(k)
     num_enum = 1
     for c in range(m):
-        num_enum *= math.comb(sum_k, k[c])
+        num_enum *= comb(sum_k, k[c], exact=True)
     # print(num_enum)
     if num_enum > 1e6:
         return list(), 0, 0
