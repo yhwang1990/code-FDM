@@ -16,7 +16,7 @@ output.flush()
 values_eps = [0.02, 0.04, 0.06, 0.08, 0.1]
 values_k = range(5, 51, 5)
 
-# read the Adult dataset grouped by genre (m=15)
+# read the Lyrics dataset grouped by genre (m=15)
 elements = []
 with open("datasets/lyrics.csv", "r") as fileobj:
     csvreader = csv.reader(fileobj, delimiter=',')
