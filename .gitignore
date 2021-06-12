@@ -130,5 +130,4 @@ dmypy.json
 
 .idea/
 .DS_Store
-datasets/blobs_*
 *.txt
