@@ -12,7 +12,7 @@ import utils
 ElemList = Union[List[utils.Element], List[utils.ElementSparse]]
 
 
-def GMM(X: ElemList, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float):
+def GMM(X: ElemList, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], List[float]):
     S = []
     div = []
     dist_array = np.full(len(X), sys.float_info.max)
@@ -38,7 +38,7 @@ def GMM(X: ElemList, k: int, init: List[int], dist: Callable[[Any, Any], float])
     return S, div
 
 
-def GMMC(X: ElemList, color: int, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], float):
+def GMMC(X: ElemList, color: int, k: int, init: List[int], dist: Callable[[Any, Any], float]) -> (List[int], List[float]):
     S = []
     div = []
     dist_array = np.full(len(X), sys.float_info.max)

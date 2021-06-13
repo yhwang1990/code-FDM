@@ -22,8 +22,7 @@ class Instance:
                 self.group_idxs.append(set())
 
 
-def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (
-        List[int], float):
+def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (List[int], float):
     Ins = []
     cur_d = dmax - 0.01
     while cur_d > dmin:
@@ -54,8 +53,7 @@ def StreamDivMax(X: ElemList, k: int, dist: Callable[[Any, Any], float], eps: fl
     return max_inst.idxs, max_inst.div
 
 
-def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (set, float, int, float, float):
+def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (set, float, int, float, float):
     if len(k) != 2:
         print("The length of k must be 2")
         return set(), 0.0, 0, 0.0, 0.0
@@ -117,8 +115,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
     upper = len(all_ins) - 1
     while lower < upper - 1:
         mid = (lower + upper) // 2
-        if len(all_ins[mid].idxs) == k[0] + k[1] and len(group_ins[0][mid].idxs) == k[0] and len(
-                group_ins[1][mid].idxs) == k[1]:
+        if len(all_ins[mid].idxs) == k[0] + k[1] and len(group_ins[0][mid].idxs) == k[0] and len(group_ins[1][mid].idxs) == k[1]:
             upper = mid
         else:
             lower = mid
@@ -126,8 +123,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
     sol_div = 0.0
     sol_idx = -1
     for ins_id in range(upper + 1):
-        if len(all_ins[ins_id].group_idxs[0].union(group_ins[0][ins_id].idxs)) < k[0] or len(
-                all_ins[ins_id].group_idxs[1].union(group_ins[1][ins_id].idxs)) < k[1]:
+        if len(all_ins[ins_id].group_idxs[0].union(group_ins[0][ins_id].idxs)) < k[0] or len(all_ins[ins_id].group_idxs[1].union(group_ins[1][ins_id].idxs)) < k[1]:
             continue
         elif len(all_ins[ins_id].idxs) < k[0] + k[1]:
             while len(all_ins[ins_id].group_idxs[0]) < k[0]:
@@ -246,8 +242,7 @@ def StreamFairDivMax1(X: ElemList, k: List[int], dist: Callable[[Any, Any], floa
     return all_ins[sol_idx].idxs, sol_div, num_elements, stream_time_per_elem, post_time
 
 
-def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float,
-                      dmin: float) -> (Set[int], float, int, float, float):
+def StreamFairDivMax2(X: ElemList, k: List[int], m: int, dist: Callable[[Any, Any], float], eps: float, dmax: float, dmin: float) -> (Set[int], float, int, float, float):
     t0 = time.perf_counter()
     # Initialization
     sum_k = sum(k)
