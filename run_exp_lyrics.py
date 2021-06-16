@@ -35,7 +35,7 @@ m = 15
 # experiments on varying epsilon
 for eps in values_eps:
     alg2 = np.zeros([4, 10])
-    for run in range(5):
+    for run in range(10):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
