@@ -16,6 +16,8 @@ output.flush()
 values_eps = [0.25, 0.2, 0.15, 0.1, 0.05]
 values_k = range(5, 51, 5)
 
+num_runs = 2
+
 # read the Census dataset grouped by sex (m=2)
 elements = []
 with open("datasets/census.csv", "r") as fileobj:
@@ -33,9 +35,9 @@ m = 2
 
 # experiments on varying epsilon
 for eps in values_eps:
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    for run in range(2):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -58,12 +60,12 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    fair_swap = np.zeros([2, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(2):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    fair_swap = np.zeros([2, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -110,9 +112,9 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg2 = np.zeros([4, 10])
-    fair_flow = np.zeros([2, 10])
-    for run in range(2):
+    alg2 = np.zeros([4, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -138,10 +140,10 @@ with open("datasets/census.csv", "r") as fileobj:
 range_d_both = [10.0, 42.5]
 m = 14
 
-alg2 = np.zeros([4, 10])
-fair_flow = np.zeros([2, 10])
+alg2 = np.zeros([4, num_runs])
+fair_flow = np.zeros([2, num_runs])
 k_20 = [2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1]
-for run in range(2):
+for run in range(num_runs):
     random.Random(run).shuffle(elements)
     for new_idx in range(len(elements)):
         elements[new_idx].idx = new_idx

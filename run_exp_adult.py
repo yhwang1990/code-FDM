@@ -32,19 +32,31 @@ range_d_sex = {5: [5.0, 11.7], 10: [4.2, 8.8], 15: [3.7, 7.5], 20: [3.2, 6.5], 2
 m = 2
 
 # experiments on varying epsilon
+num_runs = 10
 for eps in values_eps:
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    for run in range(10):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
-        sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=[10, 10], dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+        sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=[10, 10],
+                                                                                             dist=utils.euclidean_dist,
+                                                                                             eps=eps,
+                                                                                             dmax=range_d_sex[20][1],
+                                                                                             dmin=range_d_sex[20][0])
         print(sol)
-        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[10, 10], m=m, dist=utils.euclidean_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[10, 10],
+                                                                                             m=m,
+                                                                                             dist=utils.euclidean_dist,
+                                                                                             eps=eps,
+                                                                                             dmax=range_d_sex[20][1],
+                                                                                             dmin=range_d_sex[20][0])
         print(sol)
-    writer.writerow(["Adult", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["Adult", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["Adult", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                     np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+    writer.writerow(["Adult", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 # experiments on varying k
@@ -58,12 +70,12 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    fair_swap = np.zeros([2, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(10):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    fair_swap = np.zeros([2, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -73,15 +85,25 @@ for k in values_k:
         print(sol)
         sol, fair_gmm[0][run], fair_gmm[1][run] = algo.FairGMM(X=elements, k=group_k, m=m, dist=utils.euclidean_dist)
         print(sol)
-        sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=group_k, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_sex[k][1], dmin=range_d_sex[k][0])
+        sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=group_k,
+                                                                                             dist=utils.euclidean_dist,
+                                                                                             eps=0.1,
+                                                                                             dmax=range_d_sex[k][1],
+                                                                                             dmin=range_d_sex[k][0])
         print(sol)
-        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_sex[k][1], dmin=range_d_sex[k][0])
+        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m,
+                                                                                             dist=utils.euclidean_dist,
+                                                                                             eps=0.1,
+                                                                                             dmax=range_d_sex[k][1],
+                                                                                             dmin=range_d_sex[k][0])
         print(sol)
     writer.writerow(["Adult", "Sex", m, k, "FairSwap", "-", np.average(fair_swap[0]), "-", "-", "-", np.average(fair_swap[1])])
     writer.writerow(["Adult", "Sex", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["Adult", "Sex", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-    writer.writerow(["Adult", "Sex", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["Adult", "Sex", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["Adult", "Sex", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                     np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+    writer.writerow(["Adult", "Sex", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 # read the Adult dataset grouped by race (m=5)
@@ -110,10 +132,10 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg2 = np.zeros([4, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(10):
+    alg2 = np.zeros([4, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -121,11 +143,16 @@ for k in values_k:
         print(sol)
         sol, fair_gmm[0][run], fair_gmm[1][run] = algo.FairGMM(X=elements, k=group_k, m=m, dist=utils.euclidean_dist)
         print(sol)
-        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_race[k][1], dmin=range_d_race[k][0])
+        sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m,
+                                                                                             dist=utils.euclidean_dist,
+                                                                                             eps=0.1,
+                                                                                             dmax=range_d_race[k][1],
+                                                                                             dmin=range_d_race[k][0])
         print(sol)
     writer.writerow(["Adult", "Race", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["Adult", "Race", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-    writer.writerow(["Adult", "Race", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["Adult", "Race", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 # read the Adult dataset grouped by sex+race (m=10)
@@ -142,18 +169,22 @@ with open("datasets/adult.csv", "r") as fileobj:
 range_d_both = [1.3, 6.5]
 m = 10
 
-alg2 = np.zeros([4, 10])
-fair_flow = np.zeros([2, 10])
-for run in range(10):
+alg2 = np.zeros([4, num_runs])
+fair_flow = np.zeros([2, num_runs])
+for run in range(num_runs):
     random.Random(run).shuffle(elements)
     for new_idx in range(len(elements)):
         elements[new_idx].idx = new_idx
     sol, fair_flow[0][run], fair_flow[1][run] = algo.FairFlow(X=elements, k=[2] * m, m=m, dist=utils.euclidean_dist)
     print(sol)
-    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[2] * m, m=m, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_both[1], dmin=range_d_both[0])
+    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[2] * m, m=m,
+                                                                                         dist=utils.euclidean_dist,
+                                                                                         eps=0.1, dmax=range_d_both[1],
+                                                                                         dmin=range_d_both[0])
     print(sol)
 writer.writerow(["Adult", "Both", m, 20, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
-writer.writerow(["Adult", "Both", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+writer.writerow(["Adult", "Both", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                 np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
 output.flush()
 
 # read the Adult dataset grouped by sex (m=2) for proportional representation
@@ -168,12 +199,12 @@ with open("datasets/adult.csv", "r") as fileobj:
         elements.append(elem)
 m = 2
 group_k = [13, 7]
-alg1 = np.zeros([4, 10])
-alg2 = np.zeros([4, 10])
-fair_swap = np.zeros([2, 10])
-fair_flow = np.zeros([2, 10])
-fair_gmm = np.zeros([2, 10])
-for run in range(10):
+alg1 = np.zeros([4, num_runs])
+alg2 = np.zeros([4, num_runs])
+fair_swap = np.zeros([2, num_runs])
+fair_flow = np.zeros([2, num_runs])
+fair_gmm = np.zeros([2, num_runs])
+for run in range(num_runs):
     random.Random(run).shuffle(elements)
     for new_idx in range(len(elements)):
         elements[new_idx].idx = new_idx
@@ -183,15 +214,25 @@ for run in range(10):
     print(sol)
     sol, fair_gmm[0][run], fair_gmm[1][run] = algo.FairGMM(X=elements, k=group_k, m=m, dist=utils.euclidean_dist)
     print(sol)
-    sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=group_k, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+    sol, alg1[0][run], alg1[1][run], alg1[2][run], alg1[3][run] = algs.StreamFairDivMax1(X=elements, k=group_k,
+                                                                                         dist=utils.euclidean_dist,
+                                                                                         eps=0.1,
+                                                                                         dmax=range_d_sex[20][1],
+                                                                                         dmin=range_d_sex[20][0])
     print(sol)
-    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
+    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m,
+                                                                                         dist=utils.euclidean_dist,
+                                                                                         eps=0.1,
+                                                                                         dmax=range_d_sex[20][1],
+                                                                                         dmin=range_d_sex[20][0])
     print(sol)
 writer.writerow(["Adult", "Sex_P", m, 20, "FairSwap", "-", np.average(fair_swap[0]), "-", "-", "-", np.average(fair_swap[1])])
 writer.writerow(["Adult", "Sex_P", m, 20, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
 writer.writerow(["Adult", "Sex_P", m, 20, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-writer.writerow(["Adult", "Sex_P", m, 20, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-writer.writerow(["Adult", "Sex_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+writer.writerow(["Adult", "Sex_P", m, 20, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                 np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+writer.writerow(["Adult", "Sex_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                 np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
 output.flush()
 
 # read the Adult dataset grouped by race (m=5) for proportional representation
@@ -206,10 +247,10 @@ with open("datasets/adult.csv", "r") as fileobj:
         elements.append(elem)
 m = 5
 group_k = [15, 1, 1, 2, 1]
-alg2 = np.zeros([4, 10])
-fair_flow = np.zeros([2, 10])
-fair_gmm = np.zeros([2, 10])
-for run in range(10):
+alg2 = np.zeros([4, num_runs])
+fair_flow = np.zeros([2, num_runs])
+fair_gmm = np.zeros([2, num_runs])
+for run in range(num_runs):
     random.Random(run).shuffle(elements)
     for new_idx in range(len(elements)):
         elements[new_idx].idx = new_idx
@@ -217,9 +258,14 @@ for run in range(10):
     print(sol)
     sol, fair_gmm[0][run], fair_gmm[1][run] = algo.FairGMM(X=elements, k=group_k, m=m, dist=utils.euclidean_dist)
     print(sol)
-    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m, dist=utils.euclidean_dist, eps=0.1, dmax=range_d_race[20][1], dmin=range_d_race[20][0])
+    sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=group_k, m=m,
+                                                                                         dist=utils.euclidean_dist,
+                                                                                         eps=0.1,
+                                                                                         dmax=range_d_race[20][1],
+                                                                                         dmin=range_d_race[20][0])
     print(sol)
 writer.writerow(["Adult", "Race_P", m, 20, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
 writer.writerow(["Adult", "Race_P", m, 20, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-writer.writerow(["Adult", "Race_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+writer.writerow(["Adult", "Race_P", m, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                 np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
 output.close()

@@ -12,6 +12,8 @@ output = open("results_synthetic.csv", "a")
 writer = csv.writer(output)
 writer.writerow(["dataset", "n", "m", "k", "algorithm", "param_eps", "div", "num_elem", "time1", "time2", "time3"])
 
+num_runs = 5
+
 # experiments for varying m
 elements = []
 varying_m = {2: 3.6, 4: 3.5, 6: 3.3, 8: 3.3, 10: 3.2, 12: 3.2, 14: 3.2, 16: 3.1, 18: 3.1, 20: 3.0}
@@ -26,11 +28,11 @@ for m in range(2, 21, 2):
             elem = utils.Element(int(row[0]), int(row[1]), features)
             elements.append(elem)
     if m == 2:
-        alg1 = np.zeros([4, 10])
-        alg2 = np.zeros([4, 10])
-        fair_swap = np.zeros([2, 10])
-        fair_flow = np.zeros([2, 10])
-        for run in range(5):
+        alg1 = np.zeros([4, num_runs])
+        alg2 = np.zeros([4, num_runs])
+        fair_swap = np.zeros([2, num_runs])
+        fair_flow = np.zeros([2, num_runs])
+        for run in range(num_runs):
             random.Random(run).shuffle(elements)
             for new_idx in range(len(elements)):
                 elements[new_idx].idx = new_idx
@@ -48,8 +50,8 @@ for m in range(2, 21, 2):
         writer.writerow(["Blobs", 100000, 2, 20, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
         output.flush()
     else:
-        alg2 = np.zeros([4, 10])
-        fair_flow = np.zeros([2, 10])
+        alg2 = np.zeros([4, num_runs])
+        fair_flow = np.zeros([2, num_runs])
         group_k = [0] * m
         remainder = 20 % m
         for c in range(m):
@@ -57,7 +59,7 @@ for m in range(2, 21, 2):
                 group_k[c] = 20 // m + 1
             else:
                 group_k[c] = 20 // m
-        for run in range(5):
+        for run in range(num_runs):
             random.Random(run).shuffle(elements)
             for new_idx in range(len(elements)):
                 elements[new_idx].idx = new_idx
@@ -87,10 +89,10 @@ for n in num_elem:
         num_runs = 5
     else:
         num_runs = 2
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    fair_swap = np.zeros([2, 10])
-    fair_flow = np.zeros([2, 10])
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    fair_swap = np.zeros([2, num_runs])
+    fair_flow = np.zeros([2, num_runs])
     for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
@@ -123,8 +125,8 @@ for n in num_elem:
         num_runs = 5
     else:
         num_runs = 2
-    alg2 = np.zeros([4, 10])
-    fair_flow = np.zeros([2, 10])
+    alg2 = np.zeros([4, num_runs])
+    fair_flow = np.zeros([2, num_runs])
     for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):

@@ -16,6 +16,8 @@ output.flush()
 values_eps = [0.25, 0.2, 0.15, 0.1, 0.05]
 values_k = range(5, 51, 5)
 
+num_runs = 10
+
 elements = []
 with open("datasets/celeba.csv", "r") as fileobj:
     csvreader = csv.reader(fileobj, delimiter=',')
@@ -32,9 +34,9 @@ m = 2
 
 # experiments on varying epsilon
 for eps in values_eps:
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    for run in range(10):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -42,8 +44,10 @@ for eps in values_eps:
         print(sol)
         sol, alg2[0][run], alg2[1][run], alg2[2][run], alg2[3][run] = algs.StreamFairDivMax2(X=elements, k=[10, 10], m=m, dist=utils.manhattan_dist, eps=eps, dmax=range_d_sex[20][1], dmin=range_d_sex[20][0])
         print(sol)
-    writer.writerow(["CelebA", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["CelebA", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["CelebA", "Sex", m, 20, "Alg1", eps, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                     np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+    writer.writerow(["CelebA", "Sex", m, 20, "Alg2", eps, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 # experiments on varying k
@@ -57,12 +61,12 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    fair_swap = np.zeros([2, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(10):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    fair_swap = np.zeros([2, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -79,8 +83,10 @@ for k in values_k:
     writer.writerow(["CelebA", "Sex", m, k, "FairSwap", "-", np.average(fair_swap[0]), "-", "-", "-", np.average(fair_swap[1])])
     writer.writerow(["CelebA", "Sex", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["CelebA", "Sex", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-    writer.writerow(["CelebA", "Sex", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["CelebA", "Sex", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["CelebA", "Sex", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                     np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+    writer.writerow(["CelebA", "Sex", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 elements.clear()
@@ -108,12 +114,12 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg1 = np.zeros([4, 10])
-    alg2 = np.zeros([4, 10])
-    fair_swap = np.zeros([2, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(10):
+    alg1 = np.zeros([4, num_runs])
+    alg2 = np.zeros([4, num_runs])
+    fair_swap = np.zeros([2, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -138,8 +144,10 @@ for k in values_k:
     writer.writerow(["CelebA", "Age", m, k, "FairSwap", "-", np.average(fair_swap[0]), "-", "-", "-", np.average(fair_swap[1])])
     writer.writerow(["CelebA", "Age", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["CelebA", "Age", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-    writer.writerow(["CelebA", "Age", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]), np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
-    writer.writerow(["CelebA", "Age", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["CelebA", "Age", m, k, "Alg1", 0.1, np.average(alg1[0]), np.average(alg1[1]), np.average(alg1[2]),
+                     np.average(alg1[3]), np.average(alg1[2]) + np.average(alg1[3])])
+    writer.writerow(["CelebA", "Age", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
 
 elements.clear()
@@ -166,10 +174,10 @@ for k in values_k:
             group_k[c] = k // m + 1
         else:
             group_k[c] = k // m
-    alg2 = np.zeros([4, 10])
-    fair_flow = np.zeros([2, 10])
-    fair_gmm = np.zeros([2, 10])
-    for run in range(10):
+    alg2 = np.zeros([4, num_runs])
+    fair_flow = np.zeros([2, num_runs])
+    fair_gmm = np.zeros([2, num_runs])
+    for run in range(num_runs):
         random.Random(run).shuffle(elements)
         for new_idx in range(len(elements)):
             elements[new_idx].idx = new_idx
@@ -185,5 +193,6 @@ for k in values_k:
         print(sol)
     writer.writerow(["CelebA", "Both", m, k, "FairFlow", "-", np.average(fair_flow[0]), "-", "-", "-", np.average(fair_flow[1])])
     writer.writerow(["CelebA", "Both", m, k, "FairGMM", "-", np.average(fair_gmm[0]), "-", "-", "-", np.average(fair_gmm[1])])
-    writer.writerow(["CelebA", "Both", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]), np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
+    writer.writerow(["CelebA", "Both", m, k, "Alg2", 0.1, np.average(alg2[0]), np.average(alg2[1]), np.average(alg2[2]),
+                     np.average(alg2[3]), np.average(alg2[2]) + np.average(alg2[3])])
     output.flush()
