@@ -2,7 +2,10 @@ import sys
 import numpy as np
 from scipy.spatial import distance
 from typing import Any, Callable, Dict, List
-
+import scipy.sparse as sp
+from sklearn.metrics import pairwise_distances
+from sklearn.metrics import pairwise_distances_chunked
+from sklearn.metrics import pairwise_distances_argmin_min
 
 class Element:
     def __init__(self, idx: int, color: int, features: List[float]):
@@ -88,14 +91,21 @@ def diversity(elements: List[Element], dist: Callable[[Any, Any], float]) -> flo
                 div = min(div, dist(elements[i], elements[j]))
     return div
 
-
-# if __name__ == "__main__":
-#     a = ElementSparse(0, 0, {0: 1.0, 1: 1.0})
-#     b = ElementSparse(0, 0, {0: 1.0, 2: 1.0})
-#     c = ElementSparse(0, 0, {1: 1.0, 3: 1.0})
-#     print(euclidean_dist_sparse(a, b))
-#     print(manhattan_dist_sparse(a, b))
-#     print(cosine_dist_sparse(a, b))
-#     print(euclidean_dist_sparse(c, b))
-#     print(manhattan_dist_sparse(c, b))
-#     print(cosine_dist_sparse(c, b))
+    
+def get_id_lt_threshold(R: List[Element], D: List[Element], threshold, metric_name)-> list:
+    if not R:
+        return []
+    else:
+        R_features = [x.features for x in R]
+        D_features = [x.features for x in D]
+        #d_RD = distance.cdist(R_features, D_features, metric_name)
+        if metric_name.endswith('_sparse'):
+            R_features = sp.csr_matrix(np.array(R_features))
+            D_features = sp.csr_matrix(np.array(D_features))
+            metric_name = metric_name[:-7]
+        bool_list = []
+        gen = pairwise_distances_chunked(R_features, D_features, metric = metric_name)
+        for chunk in gen:
+            bool_chunk = list([np.any(chunk < threshold, axis=1)][0])
+            bool_list += bool_chunk
+        return [x.idx for x in np.array(R)[np.array(bool_list)]]
