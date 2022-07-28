@@ -8,7 +8,7 @@ Four real-world datasets ,i.e. Adult, CelebA, Census, Lyrics and one sythetic da
 python generate_synthetic_dataset.py -n 1000 -m 2 -d 2
 ```
 
-<table border='0' cellpadding='0' cellspacing='0' width='682' style='border-collapse: 
+<table border='0' cellpadding='0' cellspacing='0' width='95%' style='border-collapse: 
  collapse;t<col class='x21' width='176' style='mso-width-source:userset;width:132pt'>
  <col class='x21' width='61' style='mso-width-source:userset;width:45.75pt'>
  <col class='x21' width='77' style='mso-width-source:userset;width:57.75pt'>
