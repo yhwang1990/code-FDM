@@ -85,16 +85,6 @@ python generate_synthetic_dataset.py -n 1000 -m 2 -d 2
 <td class='x21'>2</td>
 <td class='x21'>Euclidean </td>
  </tr>
-<![if supportMisalignedColumns]>
- <tr height='0' style='display:none'>
-  <td width='97' style='width:72.75pt'></td>
-  <td width='79' style='width:59.25pt'></td>
-  <td width='176' style='width:132pt'></td>
-  <td width='61' style='width:45.75pt'></td>
-  <td width='77' style='width:57.75pt'></td>
-  <td width='192' style='width:144pt'></td>
- </tr>
- <![endif]>
 </table>
 
 
